@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Compliance Maze Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      color: #333;
+      text-align: center;
+      padding: 20px;
+    }
+    .game-container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.15);
+    }
+    h1 { color: #2c3e50; }
+    .scenario { font-weight: bold; margin: 20px 0; }
+    .options button {
+      display: block;
+      margin: 10px auto;
+      padding: 12px;
+      width: 85%;
+      border: none;
+      border-radius: 6px;
+      background: #3498db;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+    .options button:hover { background: #2980b9; }
+    .feedback { margin: 15px 0; font-weight: bold; }
+    .maze {
+      display: grid;
+      grid-template-columns: repeat(5, 50px);
+      grid-gap: 5px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+    .cell {
+      width: 50px;
+      height: 50px;
+      background: #ddd;
+      border-radius: 5px;
+    }
+    .cell.active { background: #27ae60; }
+    .cell.start { background: #2980b9; }
+    .cell.exit { background: #f39c12; }
+    .score { margin-top: 20px; font-size: 18px; }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <h1>🌀 Escape the Compliance Maze</h1>
+    <p>Answer correctly to light up the path and reach the Exit!</p>
+    <div id="game"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="maze" id="maze"></div>
+    <div class="score" id="score"></div>
+  </div>
+
+  <script>
+    const maze = [
+      {
+        scenario: "A dataset arrives without clearance.",
+        options: ["Encode immediately", "Wait until cleared outputs", "Share informally"],
+        answer: 1
+      },
+      {
+        scenario: "Multiple versions of a scorecard template exist.",
+        options: ["Allow flexibility", "Enforce version control", "Delete all copies"],
+        answer: 1
+      },
+      {
+        scenario: "Management requests a report. Which platform should you use?",
+        options: ["GEIS or other approved platforms", "Any convenient spreadsheet", "Personal email attachments"],
+        answer: 0
+      },
+      {
+        scenario: "Someone asks if the data system can generate outcomes.",
+        options: ["Yes, it determines outcomes", "No, it only reflects approved outcomes", "Sometimes, depending on inputs"],
+        answer: 1
+      },
+      {
+        scenario: "A stakeholder requests technical interpretation of compliance rules.",
+        options: ["Provide your own interpretation", "Disseminate only cleared guidance", "Ignore the request"],
+        answer: 1
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+
+    function buildMaze() {
+      const mazeGrid = document.getElementById("maze");
+      mazeGrid.innerHTML = "";
+      for (let i = 0; i < maze.length; i++) {
+        const cell = document.createElement("div");
+        cell.classList.add("cell");
+        if (i === 0) cell.classList.add("start");
+        if (i === maze.length - 1) cell.classList.add("exit");
+        mazeGrid.appendChild(cell);
+      }
+    }
+
+    function loadNode() {
+      if (current < maze.length) {
+        const q = maze[current];
+        document.getElementById("game").innerHTML = `
+          <div class="scenario">${q.scenario}</div>
+          <div class="options">
+            ${q.options.map((opt, i) => `<button onclick="checkPath(${i})">${opt}</button>`).join("")}
+          </div>
+        `;
+      } else {
+        endMaze();
+      }
+    }
+
+    function checkPath(choice) {
+      const q = maze[current];
+      if (choice === q.answer) {
+        document.getElementById("feedback").innerText = "✅ Correct path!";
+        score++;
+        document.getElementsByClassName("cell")[current].classList.add("active");
+        current++;
+      } else {
+        document.getElementById("feedback").innerText = "❌ Dead end! Back to start.";
+        current = 0;
+        score = 0;
+        buildMaze();
+      }
+      setTimeout(() => {
+        document.getElementById("feedback").innerText = "";
+        loadNode();
+      }, 1500);
+    }
+
+    function endMaze() {
+      document.getElementById("game").innerHTML = "<h2>🎉 You reached the Compliance Exit!</h2>";
+      document.getElementById("score").innerText = `Final Score: ${score}/${maze.length}`;
+      if (score === maze.length) {
+        document.getElementById("score").innerText += " 🏆 Perfect Guardian!";
+      } else {
+        document.getElementById("score").innerText += " 👍 Good effort, but review the manual again.";
+      }
+    }
+
+    buildMaze();
+    loadNode();
+  </script>
+</body>
+</html>
+
+
+
