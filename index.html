@@ -23,35 +23,66 @@
       text-align: center;
       overflow-y: auto;
     }
-    h1 { font-size: 2.5em; margin-bottom: 10px; color: #0078d7; }
-    h3 { font-size: 1.8em; margin-bottom: 15px; }
-    p { font-size: 1.2em; }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      color: #0078d7;
+    }
+    h3 {
+      font-size: 1.8em;
+      margin-bottom: 15px;
+    }
+    p {
+      font-size: 1.2em;
+    }
     button {
-      margin: 15px; padding: 16px 32px;
-      border: none; border-radius: 10px;
-      background: #0078d7; color: white;
-      font-size: 18px; cursor: pointer;
+      margin: 15px;
+      padding: 16px 32px;
+      border: none;
+      border-radius: 10px;
+      background: #0078d7;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
       transition: 0.3s;
     }
-    button:hover { background: #005a9e; transform: scale(1.05); }
+    button:hover {
+      background: #005a9e;
+      transform: scale(1.05);
+    }
     .correct { color: green; font-weight: bold; font-size: 1.2em; }
     .wrong { color: red; font-weight: bold; font-size: 1.2em; }
-    #timer { font-size: 1.5em; margin: 10px 0; color: #d9534f; }
-    .progress { margin-top: 20px; }
-    .step {
-      display: inline-block; width: 30px; height: 30px;
-      margin: 5px; border-radius: 5px; background: #ccc;
+    #timer {
+      font-size: 1.5em;
+      margin: 10px 0;
+      color: #d9534f;
     }
+    .progress {
+      margin-top: 20px;
+    }
+    .step {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      margin: 5px;
+      border-radius: 5px;
+      background: #ccc;
+    }
+    .step.active { background: #0078d7; }
     .step.correct { background: #4CAF50; }
     .step.wrong { background: #f0ad4e; }
-    .step.active { background: #0078d7; }
   </style>
 </head>
 <body>
   <div id="game"></div>
 
   <script>
-    let lives, score, currentQuestion, timer, participantName, startTime;
+    let lives = 3;
+    let score = 0;
+    let currentQuestion = 0;
+    let timer;
+    let participantName = "";
+    let startTime;
 
     const maze = [
       { scenario: "A dataset arrives without clearance.", options: ["Encode immediately", "Wait until cleared outputs", "Share informally"], answer: 1, explanation: "Always wait until clearance is given before processing datasets." },
@@ -80,12 +111,14 @@
     function startGame() {
       participantName = document.getElementById("nameInput").value || "Player";
       startTime = new Date();
-      lives = 3; score = 0; currentQuestion = 0;
+      lives = 3;
+      score = 0;
+      currentQuestion = 0;
       showQuestion();
     }
 
     function startTimer() {
-      let timeLeft = 10;
+      let timeLeft = 10; // ⏰ 10 seconds per question
       document.getElementById("timer").innerText = `Time: ${timeLeft}s`;
       timer = setInterval(() => {
         timeLeft--;
@@ -99,7 +132,10 @@
 
     function showQuestion() {
       clearInterval(timer);
-      if (currentQuestion >= maze.length || lives <= 0) { endGame(); return; }
+      if (currentQuestion >= maze.length || lives <= 0) {
+        endGame();
+        return;
+      }
       const q = maze[currentQuestion];
       document.getElementById("game").innerHTML = `
         <h1>🌀 Escape the Compliance Maze</h1>
@@ -134,25 +170,29 @@
 
     function loseLife(message) {
       lives--;
-      if (lives <= 0) { endGame(); }
-      else {
+      if (lives <= 0) {
+        endGame();
+      } else {
         document.getElementById("game").innerHTML += `<p class="wrong">${message} You lost a life. Lives left: ${lives}</p>`;
+        document.getElementById("game").innerHTML += `<button onclick="bonusQuestion()">Audit Check</button>`;
       }
     }
 
-    function renderProgress() {
-      let html = "";
-      for (let i = 0; i < maze.length; i++) {
-        let cls = "step";
-        if (i < currentQuestion) cls += " active";
-        html += `<span class="${cls}" id="step${i}"></span>`;
-      }
-      return html;
+    function bonusQuestion() {
+      document.getElementById("game").innerHTML = `
+        <h3>Audit Check: Documentation is missing. What do you do?</h3>
+        <button onclick="bonusAnswer(true)">Escalate transparently</button>
+        <button onclick="bonusAnswer(false)">Ignore it</button>
+      `;
     }
 
-    function updateProgress(status) {
-      const step = document.getElementById("step" + currentQuestion);
-      if (step) step.className = "step " + status;
+    function bonusAnswer(correct) {
+      if (correct) {
+        score += 5;
+        updateProgress("correct");
+        currentQuestion++;
+      }
+      showQuestion();
     }
 
     function endGame() {
@@ -161,8 +201,6 @@
       const totalTime = Math.floor((endTime - startTime) / 1000);
       document.getElementById("game").innerHTML = `
         <h1>🌀 Escape the Compliance Maze</h1>
-        <h2>🎉 You reached the Compliance Exit!</h2>
-        <div class="progress">${renderProgress()}</div>
-        <p>
+        <
 
 
