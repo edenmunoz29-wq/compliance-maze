@@ -4,42 +4,63 @@
   <meta charset="UTF-8">
   <title>Compliance Maze Game</title>
   <style>
-    body {
+    html, body {
+      height: 100%;
+      margin: 0;
       font-family: 'Segoe UI', Tahoma, sans-serif;
       background: url('https://www.transparenttextures.com/patterns/maze-black.png');
       background-color: #f0f0f0;
-      text-align: center;
-      margin: 0;
-      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
     #game {
-      margin: 40px auto;
-      max-width: 700px;
-      padding: 30px;
+      width: 90%;
+      height: 90%;
+      padding: 40px;
       background: rgba(255,255,255,0.95);
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      border-radius: 20px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+      overflow-y: auto;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      color: #0078d7;
+    }
+    h3 {
+      font-size: 1.8em;
+      margin-bottom: 15px;
+    }
+    p {
+      font-size: 1.2em;
     }
     button {
-      margin: 10px;
-      padding: 12px 24px;
+      margin: 15px;
+      padding: 16px 32px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       background: #0078d7;
       color: white;
-      font-size: 16px;
+      font-size: 18px;
+      cursor: pointer;
       transition: 0.3s;
     }
     button:hover {
       background: #005a9e;
       transform: scale(1.05);
     }
-    .correct { color: green; font-weight: bold; }
-    .wrong { color: red; font-weight: bold; }
+    .correct { color: green; font-weight: bold; font-size: 1.2em; }
+    .wrong { color: red; font-weight: bold; font-size: 1.2em; }
+    #timer {
+      font-size: 1.5em;
+      margin: 10px 0;
+      color: #d9534f;
+    }
   </style>
 </head>
 <body>
-  <h1>Compliance Maze Challenge</h1>
   <div id="game"></div>
 
   <script>
@@ -65,8 +86,10 @@
 
     function askName() {
       document.getElementById("game").innerHTML = `
+        <h1>Compliance Maze Challenge</h1>
         <h3>Enter your name to begin:</h3>
-        <input type="text" id="nameInput" placeholder="Your name">
+        <input type="text" id="nameInput" placeholder="Your name" style="padding:10px; font-size:18px;">
+        <br><br>
         <button onclick="startGame()">Start</button>
       `;
     }
@@ -81,7 +104,7 @@
     }
 
     function startTimer() {
-      let timeLeft = 5; // ⏰ 5 seconds per question
+      let timeLeft = 5;
       document.getElementById("timer").innerText = `Time: ${timeLeft}s`;
       timer = setInterval(() => {
         timeLeft--;
