@@ -1,69 +1,173 @@
-function startGame() {
-  participantName = document.getElementById("nameInput").value || "Player";
-  startTime = new Date(); 
-  currentQuestion = 0;
-  lives = 3;
-  score = 0;
-  showQuestion();
-}
-
-function showQuestion() {
-  clearInterval(timer); // always clear old timer
-  if (currentQuestion >= maze.length || lives <= 0) {
-    endGame();
-    return;
-  }
-  const q = maze[currentQuestion];
-  document.getElementById("game").innerHTML = `
-    <h3>Question ${currentQuestion + 1} of ${maze.length}</h3>
-    <p>${q.scenario}</p>
-    <div id="timer"></div>
-    ${q.options.map((opt, i) => `<button onclick="checkAnswer(${i})">${opt}</button>`).join("")}
-    <p>Lives: ${lives} | Score: ${score}</p>
-  `;
-  startTimer();
-}
-
-function checkAnswer(choice) {
-  clearInterval(timer);
-  const q = maze[currentQuestion];
-  if (choice === q.answer) {
-    score += 10;
-    document.getElementById("game").innerHTML += `
-      <p class="correct">✅ Correct!</p>
-      <p><em>${q.explanation}</em></p>
-    `;
-    currentQuestion++;
-    setTimeout(showQuestion, 2000); 
-  } else {
-    loseLife("❌ Wrong answer!");
-  }
-}
-
-function startTimer() {
-  let timeLeft = 5;
-  document.getElementById("timer").innerText = `Time: ${timeLeft}s`;
-  timer = setInterval(() => {
-    timeLeft--;
-    document.getElementById("timer").innerText = `Time: ${timeLeft}s`;
-    if (timeLeft <= 0) {
-      clearInterval(timer);
-      loseLife("⏰ Time ran out!");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Compliance Maze Game</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: url('https://www.transparenttextures.com/patterns/maze-black.png');
+      background-color: #f0f0f0;
+      text-align: center;
+      margin: 0;
+      padding: 0;
     }
-  }, 1000);
-}
+    #game {
+      margin: 40px auto;
+      max-width: 700px;
+      padding: 30px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    button {
+      margin: 10px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      background: #0078d7;
+      color: white;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #005a9e;
+      transform: scale(1.05);
+    }
+    .correct { color: green; font-weight: bold; }
+    .wrong { color: red; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Compliance Maze Challenge</h1>
+  <div id="game"></div>
 
-function endGame() {
-  clearInterval(timer);
-  const endTime = new Date();
-  const totalTime = Math.floor((endTime - startTime) / 1000);
-  document.getElementById("game").innerHTML = `
-    <h2>🎉 Maze Complete!</h2>
-    <p>Participant: <strong>${participantName}</strong></p>
-    <p>Final Score: <strong>${score}</strong></p>
-    <p>Total Time: <strong>${totalTime} seconds</strong></p>
-  `;
-}
+  <script>
+    let lives = 3;
+    let score = 0;
+    let currentQuestion = 0;
+    let timer;
+    let participantName = "";
+    let startTime;
+
+    const maze = [
+      { scenario: "You discover sensitive data stored in a shared drive.", options: ["Report immediately to compliance", "Ignore it", "Copy it for backup"], answer: 0, explanation: "Sensitive data must be reported immediately to compliance to prevent unauthorized access." },
+      { scenario: "A colleague asks for access to restricted files.", options: ["Grant access if they insist", "Check clearance before granting", "Share via personal email"], answer: 1, explanation: "Always verify clearance before granting access to restricted files." },
+      { scenario: "During a meeting, someone suggests skipping documentation to save time.", options: ["Agree to save effort", "Insist on proper documentation", "Stay silent"], answer: 1, explanation: "Proper documentation ensures accountability and compliance." },
+      { scenario: "You receive an external request for unpublished data.", options: ["Share after anonymizing", "Decline and refer to official channels", "Send a partial dataset"], answer: 1, explanation: "External requests must go through official channels to protect confidentiality." },
+      { scenario: "Audit reveals inconsistencies in your report.", options: ["Fix quietly", "Escalate and correct transparently", "Delete the report"], answer: 1, explanation: "Transparency is key in audits — escalate and correct openly." },
+      { scenario: "A new compliance rule is issued.", options: ["Wait until someone explains", "Read and apply immediately", "Ignore until enforced"], answer: 1, explanation: "Compliance rules must be applied immediately to avoid violations." },
+      { scenario: "You’re asked to interpret a vague regulation.", options: ["Give your own opinion", "Refer to cleared guidance", "Ask peers informally"], answer: 1, explanation: "Always rely on official guidance when interpreting regulations." },
+      { scenario: "You notice duplicate entries in the compliance database.", options: ["Delete without checking", "Verify and clean systematically", "Leave them alone"], answer: 1, explanation: "Systematic verification ensures data integrity." },
+      { scenario: "A manager pressures you to bypass a control.", options: ["Comply to avoid conflict", "Refuse and escalate", "Do it secretly"], answer: 1, explanation: "Controls must never be bypassed — escalate if pressured." },
+      { scenario: "You’re preparing a compliance report for executives.", options: ["Use approved templates", "Invent your own format", "Skip formatting"], answer: 0, explanation: "Approved templates ensure consistency and clarity." }
+    ];
+
+    function askName() {
+      document.getElementById("game").innerHTML = `
+        <h3>Enter your name to begin:</h3>
+        <input type="text" id="nameInput" placeholder="Your name">
+        <button onclick="startGame()">Start</button>
+      `;
+    }
+
+    function startGame() {
+      participantName = document.getElementById("nameInput").value || "Player";
+      startTime = new Date();
+      lives = 3;
+      score = 0;
+      currentQuestion = 0;
+      showQuestion();
+    }
+
+    function startTimer() {
+      let timeLeft = 5; // ⏰ 5 seconds per question
+      document.getElementById("timer").innerText = `Time: ${timeLeft}s`;
+      timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById("timer").innerText = `Time: ${timeLeft}s`;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          loseLife("⏰ Time ran out!");
+        }
+      }, 1000);
+    }
+
+    function showQuestion() {
+      clearInterval(timer);
+      if (currentQuestion >= maze.length || lives <= 0) {
+        endGame();
+        return;
+      }
+      const q = maze[currentQuestion];
+      document.getElementById("game").innerHTML = `
+        <h3>Question ${currentQuestion + 1} of ${maze.length}</h3>
+        <p>${q.scenario}</p>
+        <div id="timer"></div>
+        ${q.options.map((opt, i) => `<button onclick="checkAnswer(${i})">${opt}</button>`).join("")}
+        <p>Lives: ${lives} | Score: ${score}</p>
+      `;
+      startTimer();
+    }
+
+    function checkAnswer(choice) {
+      clearInterval(timer);
+      const q = maze[currentQuestion];
+      if (choice === q.answer) {
+        score += 10;
+        document.getElementById("game").innerHTML += `
+          <p class="correct">✅ Correct!</p>
+          <p><em>${q.explanation}</em></p>
+        `;
+        currentQuestion++;
+        setTimeout(showQuestion, 2000);
+      } else {
+        loseLife("❌ Wrong answer!");
+      }
+    }
+
+    function loseLife(message) {
+      lives--;
+      if (lives <= 0) {
+        endGame();
+      } else {
+        document.getElementById("game").innerHTML += `<p class="wrong">${message} You lost a life. Lives left: ${lives}</p>`;
+        document.getElementById("game").innerHTML += `<button onclick="bonusQuestion()">Audit Check</button>`;
+      }
+    }
+
+    function bonusQuestion() {
+      document.getElementById("game").innerHTML = `
+        <h3>Audit Check: Documentation is missing. What do you do?</h3>
+        <button onclick="bonusAnswer(true)">Escalate transparently</button>
+        <button onclick="bonusAnswer(false)">Ignore it</button>
+      `;
+    }
+
+    function bonusAnswer(correct) {
+      if (correct) {
+        score += 5;
+        currentQuestion++;
+      }
+      showQuestion();
+    }
+
+    function endGame() {
+      clearInterval(timer);
+      const endTime = new Date();
+      const totalTime = Math.floor((endTime - startTime) / 1000);
+      document.getElementById("game").innerHTML = `
+        <h2>🎉 Maze Complete!</h2>
+        <p>Participant: <strong>${participantName}</strong></p>
+        <p>Final Score: <strong>${score}</strong></p>
+        <p>Total Time: <strong>${totalTime} seconds</strong></p>
+      `;
+    }
+
+    window.onload = askName;
+  </script>
+</body>
+</html>
 
 
 
