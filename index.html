@@ -137,22 +137,22 @@
       if (lives <= 0) { endGame(); }
       else {
         document.getElementById("game").innerHTML += `<p class="wrong">${message} You lost a life. Lives left: ${lives}</p>`;
-        document.getElementById("game").innerHTML += `<button onclick="bonusQuestion()">Audit Check</button>`;
       }
     }
 
-    function bonusQuestion() {
-      clearInterval(timer);
-      document.getElementById("game").innerHTML = `
-        <h3>Audit Check: Documentation is missing. What do you do?</h3>
-        <button onclick="bonusAnswer(true)">Escalate transparently</button>
-        <button onclick="bonusAnswer(false)">Ignore it</button>
-      `;
+    function renderProgress() {
+      let html = "";
+      for (let i = 0; i < maze.length; i++) {
+        let cls = "step";
+        if (i < currentQuestion) cls += " active";
+        html += `<span class="${cls}" id="step${i}"></span>`;
+      }
+      return html;
     }
 
-    function bonusAnswer(correct) {
-      if (correct) { score += 5; updateProgress("correct"); currentQuestion++; }
-      showQuestion();
+    function updateProgress(status) {
+      const step = document.getElementById("step" + currentQuestion);
+      if (step) step.className = "step " + status;
     }
 
     function endGame() {
@@ -160,6 +160,10 @@
       const endTime = new Date();
       const totalTime = Math.floor((endTime - startTime) / 1000);
       document.getElementById("game").innerHTML = `
-        <h1>
+        <h1>🌀 Escape the Compliance Maze</h1>
+        <h2>🎉 You reached the Compliance Exit!</h2>
+        <div class="progress">${renderProgress()}</div>
+        <p>Participant: <strong>${participantName}</strong></p>
+        <p>Final Score:
 
 
