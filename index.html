@@ -4,11 +4,38 @@
   <meta charset="UTF-8">
   <title>Compliance Maze Game</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f4f4f4; text-align: center; }
-    #game { margin: 40px auto; max-width: 600px; padding: 20px; background: #fff; border-radius: 8px; }
-    button { margin: 8px; padding: 10px 20px; border: none; border-radius: 5px; background: #0078d7; color: white; cursor: pointer; }
-    button:hover { background: #005a9e; }
-    h2 { color: #0078d7; }
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: url('https://www.transparenttextures.com/patterns/maze-black.png');
+      background-color: #f0f0f0;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    #game {
+      margin: 40px auto;
+      max-width: 700px;
+      padding: 30px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    button {
+      margin: 10px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      background: #0078d7;
+      color: white;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #005a9e;
+      transform: scale(1.05);
+    }
+    .correct { color: green; font-weight: bold; }
+    .wrong { color: red; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -22,25 +49,20 @@
     let timer;
 
     const maze = [
-      { scenario: "You discover sensitive data stored in a shared drive.", options: ["Report immediately to compliance", "Ignore it", "Copy it for backup"], answer: 0 },
-      { scenario: "A colleague asks for access to restricted files.", options: ["Grant access if they insist", "Check clearance before granting", "Share via personal email"], answer: 1 },
-      { scenario: "During a meeting, someone suggests skipping documentation to save time.", options: ["Agree to save effort", "Insist on proper documentation", "Stay silent"], answer: 1 },
-      { scenario: "You receive an external request for unpublished data.", options: ["Share after anonymizing", "Decline and refer to official channels", "Send a partial dataset"], answer: 1 },
-      { scenario: "Audit reveals inconsistencies in your report.", options: ["Fix quietly", "Escalate and correct transparently", "Delete the report"], answer: 1 },
-      { scenario: "A new compliance rule is issued.", options: ["Wait until someone explains", "Read and apply immediately", "Ignore until enforced"], answer: 1 },
-      { scenario: "You’re asked to interpret a vague regulation.", options: ["Give your own opinion", "Refer to cleared guidance", "Ask peers informally"], answer: 1 },
-      { scenario: "You notice duplicate entries in the compliance database.", options: ["Delete without checking", "Verify and clean systematically", "Leave them alone"], answer: 1 },
-      { scenario: "A manager pressures you to bypass a control.", options: ["Comply to avoid conflict", "Refuse and escalate", "Do it secretly"], answer: 1 },
-      { scenario: "You’re preparing a compliance report for executives.", options: ["Use approved templates", "Invent your own format", "Skip formatting"], answer: 0 },
-      { scenario: "You find outdated policies in circulation.", options: ["Update immediately", "Ignore since they’re minor", "Wait for audit"], answer: 0 },
-      { scenario: "Colleagues share passwords for convenience.", options: ["Allow it", "Report and enforce secure access", "Join them"], answer: 1 },
-      { scenario: "You’re asked to present compliance results.", options: ["Use clear visuals and summaries", "Overload with raw data", "Skip context"], answer: 0 },
-      { scenario: "A vendor requests confidential project details.", options: ["Share under NDA", "Decline and escalate", "Send partial info"], answer: 1 },
-      { scenario: "You’re designing a new compliance workflow.", options: ["Align with regulations and usability", "Focus only on speed", "Ignore documentation"], answer: 0 }
+      { scenario: "You discover sensitive data stored in a shared drive.", options: ["Report immediately to compliance", "Ignore it", "Copy it for backup"], answer: 0, explanation: "Sensitive data must be reported immediately to compliance to prevent unauthorized access." },
+      { scenario: "A colleague asks for access to restricted files.", options: ["Grant access if they insist", "Check clearance before granting", "Share via personal email"], answer: 1, explanation: "Always verify clearance before granting access to restricted files." },
+      { scenario: "During a meeting, someone suggests skipping documentation to save time.", options: ["Agree to save effort", "Insist on proper documentation", "Stay silent"], answer: 1, explanation: "Proper documentation ensures accountability and compliance." },
+      { scenario: "You receive an external request for unpublished data.", options: ["Share after anonymizing", "Decline and refer to official channels", "Send a partial dataset"], answer: 1, explanation: "External requests must go through official channels to protect confidentiality." },
+      { scenario: "Audit reveals inconsistencies in your report.", options: ["Fix quietly", "Escalate and correct transparently", "Delete the report"], answer: 1, explanation: "Transparency is key in audits — escalate and correct openly." },
+      { scenario: "A new compliance rule is issued.", options: ["Wait until someone explains", "Read and apply immediately", "Ignore until enforced"], answer: 1, explanation: "Compliance rules must be applied immediately to avoid violations." },
+      { scenario: "You’re asked to interpret a vague regulation.", options: ["Give your own opinion", "Refer to cleared guidance", "Ask peers informally"], answer: 1, explanation: "Always rely on official guidance when interpreting regulations." },
+      { scenario: "You notice duplicate entries in the compliance database.", options: ["Delete without checking", "Verify and clean systematically", "Leave them alone"], answer: 1, explanation: "Systematic verification ensures data integrity." },
+      { scenario: "A manager pressures you to bypass a control.", options: ["Comply to avoid conflict", "Refuse and escalate", "Do it secretly"], answer: 1, explanation: "Controls must never be bypassed — escalate if pressured." },
+      { scenario: "You’re preparing a compliance report for executives.", options: ["Use approved templates", "Invent your own format", "Skip formatting"], answer: 0, explanation: "Approved templates ensure consistency and clarity." }
     ];
 
     function startTimer() {
-      let timeLeft = 20;
+      let timeLeft = 5; // ⏰ Adjusted to 5 seconds
       document.getElementById("timer").innerText = `Time: ${timeLeft}s`;
       timer = setInterval(() => {
         timeLeft--;
@@ -60,7 +82,8 @@
       }
       const q = maze[currentQuestion];
       document.getElementById("game").innerHTML = `
-        <h3>${q.scenario}</h3>
+        <h3>Question ${currentQuestion + 1} of ${maze.length}</h3>
+        <p>${q.scenario}</p>
         <div id="timer"></div>
         ${q.options.map((opt, i) => `<button onclick="checkAnswer(${i})">${opt}</button>`).join("")}
         <p>Lives: ${lives} | Score: ${score}</p>
@@ -70,10 +93,15 @@
 
     function checkAnswer(choice) {
       clearInterval(timer);
-      if (choice === maze[currentQuestion].answer) {
+      const q = maze[currentQuestion];
+      if (choice === q.answer) {
         score += 10;
+        document.getElementById("game").innerHTML += `
+          <p class="correct">✅ Correct!</p>
+          <p><em>${q.explanation}</em></p>
+        `;
         currentQuestion++;
-        showQuestion();
+        setTimeout(showQuestion, 2000); // pause for explanation
       } else {
         loseLife("❌ Wrong answer!");
       }
@@ -84,8 +112,7 @@
       if (lives <= 0) {
         document.getElementById("game").innerHTML = `<h2>💀 Game Over! Final Score: ${score}</h2>`;
       } else {
-        document.getElementById("game").innerHTML += `<p>${message} You lost a life. Lives left: ${lives}</p>`;
-        // Bonus "Audit Check" question
+        document.getElementById("game").innerHTML += `<p class="wrong">${message} You lost a life. Lives left: ${lives}</p>`;
         document.getElementById("game").innerHTML += `<button onclick="bonusQuestion()">Audit Check</button>`;
       }
     }
