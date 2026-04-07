@@ -7,78 +7,204 @@
 <title>AO25 Compliance Simulation</title>
 
 <style>
+/* ---------- THEME VARIABLES ---------- */
+:root {
+  --bg: linear-gradient(135deg, #0f172a, #020617);
+  --card: #020617;
+  --text: #e5e7eb;
+  --muted: #cbd5e1;
+  --border: #1e293b;
+  --button: #1e293b;
+  --button-hover: #334155;
+  --primary: linear-gradient(90deg, #22c55e, #14b8a6);
+  --progress-bg: #1e293b;
+}
+
+.light {
+  --bg: linear-gradient(135deg, #f8fafc, #e5e7eb);
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #334155;
+  --border: #cbd5e1;
+  --button: #e5e7eb;
+  --button-hover: #cbd5e1;
+  --primary: linear-gradient(90deg, #2563eb, #0ea5e9);
+  --progress-bg: #e5e7eb;
+}
+
+/* ---------- BASE ---------- */
 body {
-  font-family: Arial, sans-serif;
-  background: #111827;
-  color: #e5e7eb;
-  text-align: center;
+  margin: 0;
   padding: 20px;
+  font-family: "Segoe UI", Inter, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
 }
-.container {
-  max-width: 700px;
+
+.app {
+  max-width: 760px;
   margin: auto;
-  background: #020617;
-  padding: 30px;
-  border-radius: 12px;
+  background: var(--card);
+  border-radius: 16px;
+  padding: 32px 36px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
 }
+
+/* ---------- HEADER ---------- */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+}
+
+.header h1 {
+  margin: 0 0 6px 0;
+  font-size: 28px;
+  color: #93c5fd;
+}
+
+.header p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* ---------- TOGGLE ---------- */
+.toggle {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+/* ---------- PROGRESS ---------- */
+.progress-wrapper {
+  margin: 18px 0 24px;
+}
+.progress-track {
+  width: 100%;
+  height: 12px;
+  background: var(--progress-bg);
+  border-radius: 10px;
+}
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--primary);
+  border-radius: 10px;
+  transition: width 0.4s ease;
+}
+.progress-label {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ---------- CONTENT ---------- */
+.scenario {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 18px;
+}
+
 button {
   display: block;
-  width: 90%;
-  margin: 10px auto;
+  width: 100%;
   padding: 14px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--button);
+  color: var(--text);
   font-size: 16px;
-  border-radius: 10px;
-  border: none;
-  background: #2563eb;
-  color: white;
   cursor: pointer;
 }
+
 button:hover {
-  background: #1d4ed8;
+  background: var(--button-hover);
 }
+
+button.primary {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  font-weight: 600;
+}
+
+.status {
+  margin-top: 16px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
 .timer {
+  margin-top: 8px;
   color: #f97316;
-  margin: 10px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-  <h1>🛡️ AO25 Compliance Simulation</h1>
-  <p><strong>Role:</strong> AO25 Information Custodian</p>
+<div class="app">
+  <div class="header">
+    <div>
+      <h1>🛡️ AO25 Compliance Simulation</h1>
+      <p><strong>Role:</strong> AO25 Information Custodian</p>
+      <p>Objective: Use only cleared and approved inputs.</p>
+    </div>
+    <button class="toggle" onclick="toggleTheme()">🌓 Theme</button>
+  </div>
 
-  <button onclick="startSimulation()">Start Simulation</button>
+  <div class="progress-wrapper">
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-label" id="progressLabel">Progress: 0%</div>
+  </div>
 
-  <div id="scenario"></div>
+  <div id="content">
+    <button class="primary" onclick="startSimulation()">Start Simulation</button>
+  </div>
+
+  <div class="status" id="status"></div>
   <div class="timer" id="timer"></div>
-  <div id="progress"></div>
 </div>
 
 <script>
+/* ---------- THEME TOGGLE ---------- */
+function toggleTheme() {
+  document.body.classList.toggle("light");
+  localStorage.setItem("theme",
+    document.body.classList.contains("light") ? "light" : "dark");
+}
+
+if (localStorage.getItem("theme") === "light") {
+  document.body.classList.add("light");
+}
+
+/* ---------- DATA ---------- */
 const scenarios = [
-  { q: "Update AO25 dashboard using uncleared email data?", a: ["Yes", "No"], c: 1 },
-  { q: "Modify eligibility in the system?", a: ["Yes", "No"], c: 1 },
-  { q: "Create scorecard template without approval?", a: ["Yes", "No"], c: 1 },
-  { q: "Upload scorecard without clearance?", a: ["Yes", "No"], c: 1 },
-  { q: "Encode compliance from verbal confirmation?", a: ["Yes", "No"], c: 1 },
-  { q: "Grant unrestricted database access?", a: ["Yes", "No"], c: 1 },
-  { q: "Modify data based on interpretation?", a: ["Yes", "No"], c: 1 },
-  { q: "Is version control important?", a: ["Yes", "No"], c: 0 },
-  { q: "Does dashboard management decide eligibility?", a: ["Yes", "No"], c: 1 },
-  { q: "Is policy interpretation part of the function?", a: ["Yes", "No"], c: 1 }
+  { q:"Update AO25 dashboard using uncleared data?", a:["Yes","No"], c:1 },
+  { q:"Modify eligibility values?", a:["Yes","No"], c:1 },
+  { q:"Create new template without approval?", a:["Yes","No"], c:1 },
+  { q:"Upload scorecard without clearance?", a:["Yes","No"], c:1 },
+  { q:"Encode verbal confirmation?", a:["Yes","No"], c:1 },
+  { q:"Grant unrestricted DB access?", a:["Yes","No"], c:1 },
+  { q:"Modify data by interpretation?", a:["Yes","No"], c:1 },
+  { q:"Is version control important?", a:["Yes","No"], c:0 },
+  { q:"Does dashboard determine eligibility?", a:["Yes","No"], c:1 },
+  { q:"Does function interpret policy?", a:["Yes","No"], c:1 }
 ];
 
-let index = 0;
-let score = 0;
-let totalTime = 0;
-let timer;
+let index = 0, score = 0, totalTime = 0, timer;
 
 function startSimulation() {
-  index = 0;
-  score = 0;
-  totalTime = 0;
+  index = score = totalTime = 0;
+  updateProgress();
   renderScenario();
 }
 
@@ -86,36 +212,36 @@ function renderScenario() {
   clearInterval(timer);
 
   if (index >= scenarios.length) {
-    document.getElementById("scenario").innerHTML =
-      `<h2>✅ Simulation Complete</h2>
-       <p>Score: ${score}/${scenarios.length}</p>
-       <p>Total Time: ${totalTime} seconds</p>`;
+    document.getElementById("content").innerHTML = `
+      <h2>✅ Simulation Complete</h2>
+      <p><strong>Score:</strong> ${score}/${scenarios.length}</p>
+      <p><strong>Total Time:</strong> ${totalTime}s</p>
+      <button class="primary" onclick="startSimulation()">Restart</button>
+    `;
     document.getElementById("timer").innerText = "";
+    document.getElementById("status").innerText = "";
+    updateProgress(true);
     return;
   }
 
-  let s = scenarios[index];
-  document.getElementById("scenario").innerHTML =
-    `<h3>${s.q}</h3>` +
-    s.a.map((opt, i) =>
-      `<button onclick="answer(${i})">${opt}</button>`
-    ).join("");
+  const s = scenarios[index];
+  document.getElementById("content").innerHTML =
+    `<div class="scenario">${s.q}</div>` +
+    s.a.map((opt,i)=>`<button onclick="answer(${i})">${opt}</button>`).join("");
 
+  document.getElementById("status").innerText =
+    `Scenario ${index + 1} of ${scenarios.length}`;
+  updateProgress();
   startTimer();
 }
 
 function startTimer() {
-  let timeLeft = 10;
-  document.getElementById("timer").innerText =
-    `⏳ Clearance window: ${timeLeft}s`;
-
+  let t = 10;
+  document.getElementById("timer").innerText = `⏳ Clearance window: ${t}s`;
   timer = setInterval(() => {
-    timeLeft--;
-    totalTime++;
-    document.getElementById("timer").innerText =
-      `⏳ Clearance window: ${timeLeft}s`;
-
-    if (timeLeft <= 0) {
+    t--; totalTime++;
+    document.getElementById("timer").innerText = `⏳ Clearance window: ${t}s`;
+    if (t <= 0) {
       clearInterval(timer);
       index = 0;
       renderScenario();
@@ -128,6 +254,12 @@ function answer(choice) {
   if (choice === scenarios[index].c) score++;
   index++;
   renderScenario();
+}
+
+function updateProgress(done=false) {
+  let p = done ? 100 : Math.round((index / scenarios.length) * 100);
+  document.getElementById("progressFill").style.width = p + "%";
+  document.getElementById("progressLabel").innerText = `Progress: ${p}%`;
 }
 </script>
 
