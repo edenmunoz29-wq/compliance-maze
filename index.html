@@ -4,78 +4,121 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AO25 Simulation – Test Version</title>
+<title>AO25 Compliance Simulation</title>
+
 <style>
-body { font-family: Arial, sans-serif; background: #111827; color: #e5e7eb; text-align: center; }
-button { padding: 12px; margin: 8px; }
+body {
+  font-family: Arial, sans-serif;
+  background: #111827;
+  color: #e5e7eb;
+  text-align: center;
+  padding: 20px;
+}
+.container {
+  max-width: 700px;
+  margin: auto;
+  background: #020617;
+  padding: 30px;
+  border-radius: 12px;
+}
+button {
+  display: block;
+  width: 90%;
+  margin: 10px auto;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+button:hover {
+  background: #1d4ed8;
+}
+.timer {
+  color: #f97316;
+  margin: 10px;
+}
 </style>
 </head>
 
 <body>
 
-<h1>AO25 Compliance Simulation (TEST)</h1>
-<button onclick="startGame()">Start</button>
+<div class="container">
+  <h1>🛡️ AO25 Compliance Simulation</h1>
+  <p><strong>Role:</strong> AO25 Information Custodian</p>
 
-<div id="question"></div>
-<div id="timer"></div>
-<div id="status"></div>
+  <button onclick="startSimulation()">Start Simulation</button>
+
+  <div id="scenario"></div>
+  <div class="timer" id="timer"></div>
+  <div id="progress"></div>
+</div>
 
 <script>
 const scenarios = [
-  { q: "Use uncleared data?", a: ["Yes", "No"], c: 1 },
-  { q: "Modify eligibility?", a: ["Yes", "No"], c: 1 },
-  { q: "Create template freely?", a: ["Yes", "No"], c: 1 },
-  { q: "Upload without clearance?", a: ["Yes", "No"], c: 1 },
-  { q: "Encode verbal approval?", a: ["Yes", "No"], c: 1 },
-  { q: "Grant full DB access?", a: ["Yes", "No"], c: 1 },
-  { q: "Modify based on opinion?", a: ["Yes", "No"], c: 1 },
-  { q: "Version control useful?", a: ["Yes", "No"], c: 0 },
-  { q: "Decide eligibility?", a: ["Yes", "No"], c: 1 },
-  { q: "Interpret policy?", a: ["Yes", "No"], c: 1 }
+  { q: "Update AO25 dashboard using uncleared email data?", a: ["Yes", "No"], c: 1 },
+  { q: "Modify eligibility in the system?", a: ["Yes", "No"], c: 1 },
+  { q: "Create scorecard template without approval?", a: ["Yes", "No"], c: 1 },
+  { q: "Upload scorecard without clearance?", a: ["Yes", "No"], c: 1 },
+  { q: "Encode compliance from verbal confirmation?", a: ["Yes", "No"], c: 1 },
+  { q: "Grant unrestricted database access?", a: ["Yes", "No"], c: 1 },
+  { q: "Modify data based on interpretation?", a: ["Yes", "No"], c: 1 },
+  { q: "Is version control important?", a: ["Yes", "No"], c: 0 },
+  { q: "Does dashboard management decide eligibility?", a: ["Yes", "No"], c: 1 },
+  { q: "Is policy interpretation part of the function?", a: ["Yes", "No"], c: 1 }
 ];
 
 let index = 0;
 let score = 0;
-let timeTotal = 0;
+let totalTime = 0;
 let timer;
 
-function startGame() {
+function startSimulation() {
   index = 0;
   score = 0;
-  timeTotal = 0;
-  showQuestion();
+  totalTime = 0;
+  renderScenario();
 }
 
-function showQuestion() {
+function renderScenario() {
+  clearInterval(timer);
+
   if (index >= scenarios.length) {
-    document.getElementById("question").innerHTML =
-      `<h2>Completed</h2>
-       <p>Score: ${score}/10</p>
-       <p>Total Time: ${timeTotal}s</p>`;
+    document.getElementById("scenario").innerHTML =
+      `<h2>✅ Simulation Complete</h2>
+       <p>Score: ${score}/${scenarios.length}</p>
+       <p>Total Time: ${totalTime} seconds</p>`;
+    document.getElementById("timer").innerText = "";
     return;
   }
 
   let s = scenarios[index];
-  document.getElementById("question").innerHTML =
-    `<h3>${s.q}</h3>
-     ${s.a.map((x,i)=>`<button onclick="answer(${i})">${x}</button>`).join("")}`;
+  document.getElementById("scenario").innerHTML =
+    `<h3>${s.q}</h3>` +
+    s.a.map((opt, i) =>
+      `<button onclick="answer(${i})">${opt}</button>`
+    ).join("");
 
   startTimer();
 }
 
 function startTimer() {
-  clearInterval(timer);
-  let t = 10;
-  document.getElementById("timer").innerText = "Time: " + t;
+  let timeLeft = 10;
+  document.getElementById("timer").innerText =
+    `⏳ Clearance window: ${timeLeft}s`;
 
   timer = setInterval(() => {
-    t--;
-    timeTotal++;
-    document.getElementById("timer").innerText = "Time: " + t;
-    if (t <= 0) {
+    timeLeft--;
+    totalTime++;
+    document.getElementById("timer").innerText =
+      `⏳ Clearance window: ${timeLeft}s`;
+
+    if (timeLeft <= 0) {
       clearInterval(timer);
       index = 0;
-      showQuestion();
+      renderScenario();
     }
   }, 1000);
 }
@@ -84,10 +127,9 @@ function answer(choice) {
   clearInterval(timer);
   if (choice === scenarios[index].c) score++;
   index++;
-  showQuestion();
+  renderScenario();
 }
 </script>
 
 </body>
 </html>
-``
