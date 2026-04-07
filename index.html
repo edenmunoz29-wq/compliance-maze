@@ -7,56 +7,25 @@
 <title>AO25 Compliance Simulation</title>
 
 <style>
-/* ---------- THEME VARIABLES ---------- */
-:root {
-  --bg: linear-gradient(135deg, #0f172a, #020617);
-  --card: #020617;
-  --text: #e5e7eb;
-  --muted: #cbd5e1;
-  --border: #1e293b;
-  --button: #1e293b;
-  --button-hover: #334155;
-  --primary: linear-gradient(90deg, #22c55e, #14b8a6);
-  --progress-bg: #1e293b;
-}
-
-.light {
-  --bg: linear-gradient(135deg, #f8fafc, #e5e7eb);
-  --card: #ffffff;
-  --text: #0f172a;
-  --muted: #334155;
-  --border: #cbd5e1;
-  --button: #e5e7eb;
-  --button-hover: #cbd5e1;
-  --primary: linear-gradient(90deg, #2563eb, #0ea5e9);
-  --progress-bg: #e5e7eb;
-}
-
 /* ---------- BASE ---------- */
 body {
   margin: 0;
   padding: 20px;
   font-family: "Segoe UI", Inter, Arial, sans-serif;
-  background: var(--bg);
-  color: var(--text);
+  background: linear-gradient(135deg, #0f172a, #020617);
+  color: #e5e7eb;
 }
 
 .app {
   max-width: 760px;
   margin: auto;
-  background: var(--card);
+  background: #020617;
   border-radius: 16px;
   padding: 32px 36px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
 }
 
 /* ---------- HEADER ---------- */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: start;
-}
-
 .header h1 {
   margin: 0 0 6px 0;
   font-size: 28px;
@@ -65,84 +34,100 @@ body {
 
 .header p {
   margin: 0;
-  color: var(--muted);
+  color: #cbd5f5;
   font-size: 14px;
 }
 
-/* ---------- TOGGLE ---------- */
-.toggle {
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text);
-  border-radius: 10px;
-  padding: 8px 12px;
-  cursor: pointer;
-  font-size: 13px;
+/* ---------- PROGRESS BAR ---------- */
+.progress-wrapper {
+  margin: 18px 0 24px 0;
 }
 
-/* ---------- PROGRESS ---------- */
-.progress-wrapper {
-  margin: 18px 0 24px;
-}
 .progress-track {
   width: 100%;
   height: 12px;
-  background: var(--progress-bg);
+  background: #1e293b;
   border-radius: 10px;
+  overflow: hidden;
 }
+
 .progress-fill {
   height: 100%;
   width: 0%;
-  background: var(--primary);
-  border-radius: 10px;
+  background: linear-gradient(90deg, #22c55e, #14b8a6);
   transition: width 0.4s ease;
 }
+
 .progress-label {
   margin-top: 6px;
   font-size: 13px;
-  color: var(--muted);
+  color: #94a3b8;
 }
 
 /* ---------- CONTENT ---------- */
+.content {
+  margin-top: 20px;
+}
+
 .scenario {
   font-size: 20px;
   font-weight: 600;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
+  line-height: 1.4;
 }
 
+/* ---------- BUTTONS ---------- */
 button {
   display: block;
   width: 100%;
-  padding: 14px;
+  padding: 14px 16px;
   margin-bottom: 12px;
   border-radius: 12px;
-  border: 1px solid var(--border);
-  background: var(--button);
-  color: var(--text);
+  border: 1px solid #334155;
+  background: #1e293b;
+  color: #e5e7eb;
   font-size: 16px;
   cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
 }
 
 button:hover {
-  background: var(--button-hover);
+  background: #334155;
+  transform: translateY(-1px);
 }
 
 button.primary {
-  background: var(--primary);
-  color: #fff;
+  margin-top: 16px;
+  background: linear-gradient(90deg, #22c55e, #14b8a6);
+  color: #020617;
   border: none;
   font-weight: 600;
 }
 
+button.primary:hover {
+  background: linear-gradient(90deg, #16a34a, #0d9488);
+}
+
+/* ---------- STATUS ---------- */
 .status {
   margin-top: 16px;
   font-size: 14px;
-  color: var(--muted);
+  color: #cbd5e1;
 }
 
 .timer {
   margin-top: 8px;
   color: #f97316;
+  font-weight: 500;
+}
+
+/* ---------- FOOTER ---------- */
+.footer {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #1e293b;
+  font-size: 13px;
+  color: #94a3b8;
 }
 </style>
 </head>
@@ -150,60 +135,66 @@ button.primary {
 <body>
 
 <div class="app">
+
+  <!-- HEADER -->
   <div class="header">
-    <div>
-      <h1>🛡️ AO25 Compliance Simulation</h1>
-      <p><strong>Role:</strong> AO25 Information Custodian</p>
-      <p>Objective: Use only cleared and approved inputs.</p>
-    </div>
-    <button class="toggle" onclick="toggleTheme()">🌓 Theme</button>
+    <h1>🛡️ AO25 Compliance Simulation</h1>
+    <p><strong>Role:</strong> AO25 Information Custodian</p>
+    <p>Objective: Make decisions using only cleared and approved inputs.</p>
   </div>
 
+  <!-- PROGRESS BAR -->
   <div class="progress-wrapper">
     <div class="progress-track">
       <div class="progress-fill" id="progressFill"></div>
     </div>
-    <div class="progress-label" id="progressLabel">Progress: 0%</div>
+    <div class="progress-label" id="progressLabel">
+      Progress: 0%
+    </div>
   </div>
 
-  <div id="content">
+  <!-- CONTENT -->
+  <div class="content" id="content">
     <button class="primary" onclick="startSimulation()">Start Simulation</button>
   </div>
 
+  <!-- STATUS -->
   <div class="status" id="status"></div>
   <div class="timer" id="timer"></div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    This activity simulates compliance-oriented decision making.
+  </div>
+
 </div>
 
 <script>
-/* ---------- THEME TOGGLE ---------- */
-function toggleTheme() {
-  document.body.classList.toggle("light");
-  localStorage.setItem("theme",
-    document.body.classList.contains("light") ? "light" : "dark");
-}
-
-if (localStorage.getItem("theme") === "light") {
-  document.body.classList.add("light");
-}
-
 /* ---------- DATA ---------- */
 const scenarios = [
-  { q:"Update AO25 dashboard using uncleared data?", a:["Yes","No"], c:1 },
-  { q:"Modify eligibility values?", a:["Yes","No"], c:1 },
-  { q:"Create new template without approval?", a:["Yes","No"], c:1 },
-  { q:"Upload scorecard without clearance?", a:["Yes","No"], c:1 },
-  { q:"Encode verbal confirmation?", a:["Yes","No"], c:1 },
-  { q:"Grant unrestricted DB access?", a:["Yes","No"], c:1 },
-  { q:"Modify data by interpretation?", a:["Yes","No"], c:1 },
-  { q:"Is version control important?", a:["Yes","No"], c:0 },
-  { q:"Does dashboard determine eligibility?", a:["Yes","No"], c:1 },
-  { q:"Does function interpret policy?", a:["Yes","No"], c:1 }
+  { q: "Update the AO25 dashboard using uncleared email data?", a: ["Yes", "No"], c: 1 },
+  { q: "Modify eligibility values in the system?", a: ["Yes", "No"], c: 1 },
+  { q: "Create a new scorecard template without approval?", a: ["Yes", "No"], c: 1 },
+  { q: "Upload an agency scorecard without clearance?", a: ["Yes", "No"], c: 1 },
+  { q: "Encode compliance based on verbal confirmation?", a: ["Yes", "No"], c: 1 },
+  { q: "Grant unrestricted database access?", a: ["Yes", "No"], c: 1 },
+  { q: "Modify data based on interpretation?", a: ["Yes", "No"], c: 1 },
+  { q: "Is version control important?", a: ["Yes", "No"], c: 0 },
+  { q: "Does dashboard management determine eligibility?", a: ["Yes", "No"], c: 1 },
+  { q: "Is policy interpretation part of this function?", a: ["Yes", "No"], c: 1 }
 ];
 
-let index = 0, score = 0, totalTime = 0, timer;
+/* ---------- STATE ---------- */
+let index = 0;
+let score = 0;
+let totalTime = 0;
+let timer;
 
+/* ---------- FUNCTIONS ---------- */
 function startSimulation() {
-  index = score = totalTime = 0;
+  index = 0;
+  score = 0;
+  totalTime = 0;
   updateProgress();
   renderScenario();
 }
@@ -211,12 +202,14 @@ function startSimulation() {
 function renderScenario() {
   clearInterval(timer);
 
+  const content = document.getElementById("content");
+
   if (index >= scenarios.length) {
-    document.getElementById("content").innerHTML = `
+    content.innerHTML = `
       <h2>✅ Simulation Complete</h2>
       <p><strong>Score:</strong> ${score}/${scenarios.length}</p>
-      <p><strong>Total Time:</strong> ${totalTime}s</p>
-      <button class="primary" onclick="startSimulation()">Restart</button>
+      <p><strong>Total Time:</strong> ${totalTime} seconds</p>
+      <button class="primary" onclick="startSimulation()">Restart Simulation</button>
     `;
     document.getElementById("timer").innerText = "";
     document.getElementById("status").innerText = "";
@@ -225,25 +218,33 @@ function renderScenario() {
   }
 
   const s = scenarios[index];
-  document.getElementById("content").innerHTML =
-    `<div class="scenario">${s.q}</div>` +
-    s.a.map((opt,i)=>`<button onclick="answer(${i})">${opt}</button>`).join("");
+  content.innerHTML = `
+    <div class="scenario">${s.q}</div>
+    ${s.a.map((opt,i)=>`<button onclick="answer(${i})">${opt}</button>`).join("")}
+  `;
 
   document.getElementById("status").innerText =
     `Scenario ${index + 1} of ${scenarios.length}`;
+
   updateProgress();
   startTimer();
 }
 
 function startTimer() {
-  let t = 10;
-  document.getElementById("timer").innerText = `⏳ Clearance window: ${t}s`;
+  let timeLeft = 10;
+  document.getElementById("timer").innerText =
+    `⏳ Clearance window: ${timeLeft}s`;
+
   timer = setInterval(() => {
-    t--; totalTime++;
-    document.getElementById("timer").innerText = `⏳ Clearance window: ${t}s`;
-    if (t <= 0) {
+    timeLeft--;
+    totalTime++;
+    document.getElementById("timer").innerText =
+      `⏳ Clearance window: ${timeLeft}s`;
+
+    if (timeLeft <= 0) {
       clearInterval(timer);
       index = 0;
+      updateProgress();
       renderScenario();
     }
   }, 1000);
@@ -253,13 +254,20 @@ function answer(choice) {
   clearInterval(timer);
   if (choice === scenarios[index].c) score++;
   index++;
+  updateProgress();
   renderScenario();
 }
 
-function updateProgress(done=false) {
-  let p = done ? 100 : Math.round((index / scenarios.length) * 100);
-  document.getElementById("progressFill").style.width = p + "%";
-  document.getElementById("progressLabel").innerText = `Progress: ${p}%`;
+function updateProgress(forceComplete = false) {
+  const progressFill = document.getElementById("progressFill");
+  const progressLabel = document.getElementById("progressLabel");
+
+  let percent = forceComplete
+    ? 100
+    : Math.round((index / scenarios.length) * 100);
+
+  progressFill.style.width = percent + "%";
+  progressLabel.innerText = `Progress: ${percent}%`;
 }
 </script>
 
