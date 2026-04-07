@@ -2,171 +2,191 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AO25 Compliance Simulation (Dark Mode)</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AO25 Compliance Simulation</title>
 
-  <style>
-    body {
-      font-family: "Segoe UI", Roboto, Arial, sans-serif;
-      background: linear-gradient(135deg, #0f172a, #020617);
-      color: #e5e7eb;
-      text-align: center;
-      padding: 20px;
-      font-size: 17px;
-    }
+<style>
+/* ---------- BASE ---------- */
+body {
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  background: linear-gradient(135deg, #0f172a, #020617);
+  color: #e5e7eb;
+  text-align: center;
+  padding: 20px;
+  animation: fadeIn 0.8s ease;
+}
 
-    .game-container {
-      max-width: 900px;
-      margin: auto;
-      background: #020617;
-      padding: 36px;
-      border-radius: 18px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-    }
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
-    h1 {
-      margin-bottom: 8px;
-      font-weight: 700;
-      color: #93c5fd;
-    }
+.game-container {
+  max-width: 900px;
+  margin: auto;
+  background: #020617;
+  padding: 36px;
+  border-radius: 18px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  animation: slideUp 0.6s ease;
+}
 
-    .role-desc {
-      background: #020617;
-      border: 1px solid #1e293b;
-      border-radius: 12px;
-      padding: 14px;
-      font-size: 14px;
-      color: #cbd5f5;
-      margin-bottom: 26px;
-    }
+@keyframes slideUp {
+  from { transform: translateY(15px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
 
-    input {
-      padding: 12px;
-      border-radius: 10px;
-      border: none;
-      width: 60%;
-      background: #0f172a;
-      color: #e5e7eb;
-    }
+h1 {
+  color: #93c5fd;
+  margin-bottom: 8px;
+}
 
-    .start-btn {
-      padding: 14px 28px;
-      border-radius: 14px;
-      background: linear-gradient(90deg, #22c55e, #14b8a6);
-      border: none;
-      color: #020617;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 15px;
-    }
+.role-desc {
+  background: #020617;
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 14px;
+  color: #cbd5f5;
+  margin-bottom: 24px;
+}
 
-    .scenario {
-      font-size: 22px;
-      font-weight: 600;
-      margin: 28px 0;
-      color: #f8fafc;
-    }
+/* ---------- INPUT ---------- */
+input {
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  width: 65%;
+  background: #0f172a;
+  color: #e5e7eb;
+}
 
-    .options button {
-      display: block;
-      margin: 12px auto;
-      padding: 16px 20px;
-      width: 92%;
-      border-radius: 14px;
-      background: #1e293b;
-      color: #e5e7eb;
-      border: 1px solid #334155;
-      font-size: 17px;
-      cursor: pointer;
-      transition: transform 0.15s ease, background 0.15s;
-    }
+.start-btn {
+  padding: 14px 28px;
+  border-radius: 14px;
+  background: linear-gradient(90deg, #22c55e, #14b8a6);
+  border: none;
+  color: #020617;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
 
-    .options button:hover {
-      background: #334155;
-      transform: translateY(-2px);
-    }
+.start-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(34,197,94,0.35);
+}
 
-    .feedback {
-      margin: 18px 0;
-      font-weight: 600;
-      color: #fde68a;
-    }
+/* ---------- SCENARIOS ---------- */
+.scenario {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 28px 0;
+  animation: fadeIn 0.4s ease;
+}
 
-    .timer {
-      font-size: 16px;
-      color: #f97316;
-      margin: 10px 0;
-    }
+.options button {
+  display: block;
+  margin: 12px auto;
+  padding: 16px 20px;
+  width: 92%;
+  border-radius: 14px;
+  background: #1e293b;
+  color: #e5e7eb;
+  border: 1px solid #334155;
+  font-size: 17px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
 
-    .progress-container {
-      width: 100%;
-      background: #1e293b;
-      border-radius: 20px;
-      margin: 18px 0;
-      height: 18px;
-      overflow: hidden;
-    }
+.options button:hover {
+  background: #334155;
+  transform: translateY(-2px);
+}
 
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #22c55e, #14b8a6);
-      transition: width 0.4s ease;
-    }
+/* ---------- FEEDBACK ---------- */
+.feedback {
+  margin: 18px 0;
+  font-weight: 600;
+  color: #fde68a;
+  animation: fadeIn 0.3s ease;
+}
 
-    .status-line {
-      font-size: 15px;
-      color: #cbd5e1;
-      margin-bottom: 12px;
-    }
+.timer {
+  color: #f97316;
+  margin: 10px 0;
+}
 
-    .maze {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(42px, 11vw));
-      grid-gap: 7px;
-      justify-content: center;
-      margin: 25px auto;
-    }
+/* ---------- PROGRESS ---------- */
+.progress-container {
+  width: 100%;
+  background: #1e293b;
+  border-radius: 20px;
+  margin: 18px 0;
+  height: 18px;
+  overflow: hidden;
+}
 
-    .cell {
-      width: 11vw;
-      max-width: 46px;
-      height: 11vw;
-      max-height: 46px;
-      background: #1e293b;
-      border-radius: 8px;
-    }
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #22c55e, #14b8a6);
+  transition: width 0.5s ease;
+}
 
-    .cell.start { background: #2563eb; }
-    .cell.active { background: #22c55e; }
-    .cell.exit { background: #f59e0b; }
+.status-line {
+  font-size: 15px;
+  color: #cbd5e1;
+}
 
-    .review {
-      text-align: left;
-      background: #020617;
-      border: 1px solid #1e293b;
-      border-radius: 14px;
-      padding: 22px;
-      margin-top: 24px;
-      font-size: 16px;
-      line-height: 1.45;
-    }
-  </style>
+/* ---------- MAZE ---------- */
+.maze {
+  display: grid;
+  grid-template-columns: repeat(5, 46px);
+  gap: 7px;
+  justify-content: center;
+  margin: 26px auto;
+}
+
+.cell {
+  width: 46px;
+  height: 46px;
+  background: #1e293b;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+
+.cell.start { background: #2563eb; }
+.cell.active { background: #22c55e; }
+.cell.exit { background: #f59e0b; }
+
+/* ---------- REVIEW ---------- */
+.review {
+  text-align: left;
+  background: #020617;
+  border: 1px solid #1e293b;
+  border-radius: 14px;
+  padding: 22px;
+  margin-top: 24px;
+  font-size: 16px;
+  line-height: 1.5;
+  animation: fadeIn 0.6s ease;
+}
+</style>
 </head>
 
 <body>
 <div class="game-container">
   <h1>🛡️ AO25 Compliance Simulation</h1>
-
   <div class="role-desc">
-    <strong>Your Role:</strong> AO25 Information Custodian<br>
-    <strong>Your Objective:</strong> Safely move information through the system using only approved inputs.
+    <strong>Role:</strong> AO25 Information Custodian<br>
+    <strong>Objective:</strong> Ensure all information actions use cleared and approved inputs.
   </div>
 
   <p>Enter your name to begin:</p>
-  <input type="text" id="playerName" placeholder="Your Name"><br>
+  <input id="playerName" placeholder="Your Name"><br>
   <button class="start-btn" onclick="startSimulation()">Begin Simulation</button>
 
   <div id="game"></div>
@@ -182,33 +202,112 @@
 </div>
 
 <script>
-/* ---- LOGIC (UNCHANGED FROM LIGHT VERSION) ---- */
-
+/* ---------- SCENARIOS (ALL 10) ---------- */
 const maze = [
   {
     scenario: "A staff member updates the AO25 dashboard using data from an email that has not yet been formally cleared.",
     options: [
-      "Update immediately since the data is available",
-      "Wait for cleared and approved inputs before updating",
-      "Upload the data but label it as unofficial"
+      "Update immediately",
+      "Wait for cleared and approved inputs",
+      "Upload and label as unofficial"
     ],
     answer: 1,
-    explanation: "Only cleared and approved data may be used for official AO25 dashboard updates."
+    explanation: "Only cleared and approved data may be used in official systems."
   },
   {
-    scenario: "The Data Systems team notices that an agency’s eligibility appears incorrect and decides to revise it in the system.",
+    scenario: "The Data Systems team notices an agency’s eligibility seems incorrect.",
     options: [
       "Correct it to ensure accuracy",
-      "Decline, as the function does not determine or modify eligibility outcomes",
-      "Correct it if the change is minor"
+      "Decline, as the function cannot modify eligibility outcomes",
+      "Correct it if the error seems small"
     ],
     answer: 1,
-    explanation: "The function manages systems but does not determine or change eligibility outcomes."
+    explanation: "The function reflects outcomes but does not determine or change them."
   },
-  // (remaining scenarios stay the same as your latest version)
+  {
+    scenario: "A staff member designs a new scorecard template without consultation.",
+    options: [
+      "Allow flexibility",
+      "Align with approved guidelines",
+      "Approve if team agrees"
+    ],
+    answer: 1,
+    explanation: "Templates must follow approved institutional standards."
+  },
+  {
+    scenario: "An agency scorecard is ready but not yet formally cleared.",
+    options: [
+      "Upload immediately",
+      "Upload only after clearance",
+      "Upload and replace later"
+    ],
+    answer: 1,
+    explanation: "Formal clearance is required before publishing."
+  },
+  {
+    scenario: "Compliance status is encoded based on verbal confirmation.",
+    options: [
+      "Encode immediately",
+      "Encode only after cleared outputs",
+      "Encode but flag it"
+    ],
+    answer: 1,
+    explanation: "Verbal confirmation is insufficient for official encoding."
+  },
+  {
+    scenario: "A request is made for unrestricted AO25 database access.",
+    options: [
+      "Grant access",
+      "Grant temporary access",
+      "Apply access controls"
+    ],
+    answer: 2,
+    explanation: "Access must be limited and role-based."
+  },
+  {
+    scenario: "Data is modified due to stakeholder interpretation.",
+    options: [
+      "Accept interpretation",
+      "Reject; reflect only approved inputs",
+      "Accept if documented"
+    ],
+    answer: 1,
+    explanation: "Only approved data may be reflected."
+  },
+  {
+    scenario: "Why is version control essential?",
+    options: [
+      "Tracking and integrity",
+      "Limiting access",
+      "Simplifying design"
+    ],
+    answer: 0,
+    explanation: "Version control ensures traceability and integrity."
+  },
+  {
+    scenario: "Managing the AO25 dashboard includes:",
+    options: [
+      "Determining eligibility",
+      "Updating based on approved data",
+      "Interpreting compliance rules"
+    ],
+    answer: 1,
+    explanation: "The dashboard reflects approved data only."
+  },
+  {
+    scenario: "What best describes the function’s role?",
+    options: [
+      "Determines outcomes",
+      "Manages systems using validated data",
+      "Provides policy interpretation"
+    ],
+    answer: 1,
+    explanation: "The function manages systems, not decisions."
+  }
 ];
 
-let current = 0, score = 0, timer;
+/* ---------- LOGIC ---------- */
+let current = 0, score = 0, reviewLog = [];
 
 function getRoleStatus() {
   if (current < 3) return "Trainee";
@@ -219,6 +318,7 @@ function getRoleStatus() {
 
 function startSimulation() {
   current = score = 0;
+  reviewLog = [];
   buildMaze();
   loadNode();
 }
@@ -227,53 +327,62 @@ function buildMaze() {
   const grid = document.getElementById("maze");
   grid.innerHTML = "";
   maze.forEach((_, i) => {
-    const cell = document.createElement("div");
-    cell.className = "cell";
-    if (i === 0) cell.classList.add("start");
-    if (i === maze.length - 1) cell.classList.add("exit");
-    grid.appendChild(cell);
+    const c = document.createElement("div");
+    c.className = "cell";
+    if (i === 0) c.classList.add("start");
+    if (i === maze.length - 1) c.classList.add("exit");
+    grid.appendChild(c);
   });
 }
 
 function loadNode() {
-  clearInterval(timer);
   if (current >= maze.length) return endSimulation();
-
   const q = maze[current];
-  document.getElementById("game").innerHTML = `
-    <div class="scenario">${q.scenario}</div>
-    <div class="options">
-      ${q.options.map((o, i) =>
-        `<button onclick="checkPath(${i})">Proceed with: ${o}</button>`
-      ).join("")}
-    </div>
-  `;
+  document.getElementById("game").innerHTML =
+    `<div class="scenario">${q.scenario}</div>
+     <div class="options">
+       ${q.options.map((o,i)=>`<button onclick="checkPath(${i})">${o}</button>`).join("")}
+     </div>`;
   updateProgress();
 }
 
 function checkPath(choice) {
-  clearInterval(timer);
-  if (choice === maze[current].answer) {
+  const q = maze[current];
+  reviewLog.push({...q, chosen: q.options[choice]});
+  if (choice === q.answer) {
     document.querySelectorAll(".cell")[current].classList.add("active");
-    current++;
+    document.getElementById("feedback").innerText = "✅ Approved input accepted.";
+    current++; score++;
   } else {
-    current = 0;
+    document.getElementById("feedback").innerText = "🚫 Compliance control triggered. Workflow reset.";
+    current = score = 0;
     buildMaze();
   }
-  loadNode();
+  setTimeout(() => {
+    document.getElementById("feedback").innerText = "";
+    loadNode();
+  }, 1200);
 }
 
 function updateProgress() {
   document.getElementById("progressBar").style.width =
     `${(current / maze.length) * 100}%`;
-  document.getElementById("statusLine").textContent =
+  document.getElementById("statusLine").innerText =
     `Current Status: ${getRoleStatus()}`;
 }
 
 function endSimulation() {
-  document.getElementById("game").innerHTML =
-    "<h2>✅ Simulation Complete</h2>";
+  let html = `<h2>✅ Simulation Complete</h2>
+              <p><strong>Final Role:</strong> ${getRoleStatus()}</p>
+              <div class="review">`;
+  reviewLog.forEach((r,i)=>{
+    html+=`<p><strong>Scenario ${i+1}:</strong> ${r.scenario}<br>
+           <strong>Your action:</strong> ${r.chosen}<br>
+           <em>${r.explanation}</em></p>`;
+  });
+  document.getElementById("game").innerHTML = html + "</div>";
 }
 </script>
 </body>
 </html>
+
