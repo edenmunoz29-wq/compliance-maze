@@ -8,7 +8,7 @@
 
 <style>
 body {
-  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  font-family: "Segoe UI", Arial, sans-serif;
   background: linear-gradient(135deg, #0f172a, #020617);
   color: #e5e7eb;
   text-align: center;
@@ -19,9 +19,8 @@ body {
   max-width: 900px;
   margin: auto;
   background: #020617;
-  padding: 36px;
-  border-radius: 18px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  padding: 32px;
+  border-radius: 16px;
 }
 
 h1 { color: #93c5fd; }
@@ -32,7 +31,7 @@ h1 { color: #93c5fd; }
   padding: 14px;
   font-size: 14px;
   color: #cbd5f5;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 input {
@@ -58,59 +57,44 @@ input {
 .scenario {
   font-size: 22px;
   font-weight: 600;
-  margin: 28px 0;
+  margin: 24px 0;
 }
 
 .options button {
   display: block;
-  margin: 12px auto;
-  padding: 16px 20px;
-  width: 92%;
-  border-radius: 14px;
+  margin: 10px auto;
+  padding: 14px;
+  width: 90%;
+  border-radius: 12px;
   background: #1e293b;
   color: #e5e7eb;
   border: 1px solid #334155;
-  font-size: 17px;
   cursor: pointer;
 }
 
-.feedback {
-  margin: 18px 0;
-  font-weight: 600;
-  color: #fde68a;
-}
-
-.timer {
-  color: #f97316;
-  margin: 10px 0;
-}
+.feedback { color: #fde68a; margin: 10px 0; }
+.timer { color: #f97316; }
 
 .progress-container {
   width: 100%;
   background: #1e293b;
   border-radius: 20px;
-  margin: 18px 0;
   height: 18px;
+  margin: 14px 0;
 }
 
 .progress-bar {
   height: 100%;
   width: 0%;
   background: linear-gradient(90deg, #22c55e, #14b8a6);
-  transition: width 0.5s ease;
-}
-
-.status-line {
-  font-size: 15px;
-  color: #cbd5e1;
 }
 
 .maze {
   display: grid;
   grid-template-columns: repeat(5, 46px);
-  gap: 7px;
+  gap: 6px;
   justify-content: center;
-  margin: 26px auto;
+  margin: 20px auto;
 }
 
 .cell {
@@ -132,7 +116,7 @@ input {
 
   <div class="role-desc">
     <strong>Role:</strong> AO25 Information Custodian<br>
-    <strong>Objective:</strong> Make decisions using only cleared and approved inputs.
+    Make decisions using only cleared and approved inputs.
   </div>
 
   <input id="playerName" placeholder="Your Name"><br>
@@ -145,36 +129,29 @@ input {
     <div class="progress-bar" id="progressBar"></div>
   </div>
 
-  <div class="status-line" id="statusLine"></div>
-  <div class="feedback" id="feedback"></div>
+  <div id="feedback" class="feedback"></div>
   <div class="maze" id="maze"></div>
 </div>
 
 <script>
-/* ---------- SCENARIOS ---------- */
 const maze = [
-  { scenario: "A staff member updates the AO25 dashboard using uncleared email data.", options: ["Update immediately", "Wait for approved inputs", "Upload as unofficial"], answer: 1 },
-  { scenario: "Eligibility appears incorrect in the system.", options: ["Correct it", "Do not modify eligibility outcomes", "Fix minor error"], answer: 1 },
-  { scenario: "A new scorecard template is created informally.", options: ["Allow it", "Align with approved guidelines", "Approve by consensus"], answer: 1 },
-  { scenario: "An agency scorecard lacks clearance.", options: ["Upload now", "Upload after clearance", "Upload temporarily"], answer: 1 },
-  { scenario: "Compliance status is based on verbal confirmation.", options: ["Encode immediately", "Wait for cleared outputs", "Encode and flag"], answer: 1 },
-  { scenario: "A request is made for unrestricted DB access.", options: ["Grant access", "Temporary access", "Apply access controls"], answer: 2 },
-  { scenario: "Data modified based on interpretation.", options: ["Accept", "Reflect approved inputs only", "Accept if documented"], answer: 1 },
-  { scenario: "Why is version control important?", options: ["Tracking & integrity", "Limit access", "Simplify design"], answer: 0 },
-  { scenario: "Dashboard management includes:", options: ["Determining eligibility", "Updating approved data", "Interpret rules"], answer: 1 },
-  { scenario: "Function role is to:", options: ["Determine outcomes", "Manage systems with validated data", "Interpret policy"], answer: 1 }
+  { scenario:"AO25 dashboard update with uncleared data.", options:["Update now","Wait for approval","Upload unofficial"], answer:1 },
+  { scenario:"Eligibility looks incorrect.", options:["Correct it","Do not modify outcomes","Fix minor error"], answer:1 },
+  { scenario:"New scorecard template created.", options:["Allow it","Use approved guidelines","Approve by team"], answer:1 },
+  { scenario:"Scorecard lacks clearance.", options:["Upload","Wait for clearance","Temporary upload"], answer:1 },
+  { scenario:"Verbal confirmation received.", options:["Encode","Wait for cleared output","Encode and flag"], answer:1 },
+  { scenario:"Unrestricted DB access requested.", options:["Grant","Temporary","Apply access control"], answer:2 },
+  { scenario:"Stakeholder interpretation used.", options:["Accept","Approved data only","Accept if documented"], answer:1 },
+  { scenario:"Why version control?", options:["Integrity","Limit access","Simplify"], answer:0 },
+  { scenario:"Dashboard management includes:", options:["Eligibility","Approved updates","Interpret rules"], answer:1 },
+  { scenario:"Function role is to:", options:["Decide outcomes","Manage systems","Interpret policy"], answer:1 }
 ];
 
-let current = 0, score = 0;
-let timer, timeLeft = 10;
-let totalTime = 0; // ✅ TOTAL TIME TRACKER
-
-function getRoleStatus() {
-  if (current < 3) return "Trainee";
-  if (current < 6) return "Compliance Officer";
-  if (current < 9) return "Information Custodian";
-  return "Governance Champion";
-}
+let current = 0;
+let score = 0;
+let totalTime = 0;
+let timer;
+let timeLeft = 10;
 
 function startSimulation() {
   current = score = totalTime = 0;
@@ -197,39 +174,65 @@ function buildMaze() {
 function startTimer() {
   clearInterval(timer);
   timeLeft = 10;
-  const timerEl = document.getElementById("timer");
-  timerEl.innerText = `⏳ Clearance window: ${timeLeft}s`;
+  const t = document.getElementById("timer");
+  t.innerText = `⏳ Clearance window: ${timeLeft}s`;
 
   timer = setInterval(() => {
     timeLeft--;
-    totalTime++; // ✅ COUNT TOTAL TIME
-    timerEl.innerText = `⏳ Clearance window: ${timeLeft}s`;
+    totalTime++;
+    t.innerText = `⏳ Clearance window: ${timeLeft}s`;
 
-    if (timeLeft <= 0) {
-      clearInterval(timer);
-      document.getElementById("feedback").innerText =
-        "⚠️ Clearance window expired. Workflow reset.";
-      current = score = 0;
-      buildMaze();
-      updateProgress();
-      setTimeout(loadNode, 1500);
-    }
+    if (timeLeft <= 0) resetSimulation("⏳ Time expired.");
   }, 1000);
+}
+
+function resetSimulation(msg) {
+  clearInterval(timer);
+  document.getElementById("feedback").innerText = msg;
+  current = score = 0;
+  buildMaze();
+  setTimeout(() => {
+    document.getElementById("feedback").innerText = "";
+    loadNode();
+  }, 1200);
 }
 
 function loadNode() {
   if (current >= maze.length) return endSimulation();
+  startTimer();
   const q = maze[current];
   document.getElementById("game").innerHTML = `
     <div class="scenario">${q.scenario}</div>
     <div class="options">
       ${q.options.map((o,i)=>`<button onclick="checkPath(${i})">${o}</button>`).join("")}
     </div>`;
-  updateProgress();
-  startTimer();
 }
 
 function checkPath(choice) {
   clearInterval(timer);
+  const cells = document.getElementsByClassName("cell");
   if (choice === maze[current].answer) {
-    document.getElementsByClassName("cell")[current].
+    if (cells[current]) cells[current].classList.add("active");
+    score++;
+    current++;
+    document.getElementById("feedback").innerText = "✅ Approved input accepted.";
+  } else {
+    resetSimulation("🚫 Compliance violation.");
+    return;
+  }
+  setTimeout(() => {
+    document.getElementById("feedback").innerText = "";
+    loadNode();
+  }, 1000);
+}
+
+function endSimulation() {
+  document.getElementById("game").innerHTML = `
+    <h2>✅ Simulation Complete</h2>
+    <p>Score: ${score}/${maze.length}</p>
+    <p>Total Time: ${totalTime} seconds</p>
+  `;
+}
+</script>
+</body>
+</html>
