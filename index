@@ -1,0 +1,343 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Info Maze Game</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      color: #333;
+      text-align: center;
+      padding: 20px;
+      font-size: 18px;
+    }
+    .game-container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.15);
+    }
+    h1 { color: #2c3e50; }
+    .scenario {
+      font-weight: bold;
+      font-size: 22px;
+      margin: 20px 0;
+    }
+    .options button {
+      display: block;
+      margin: 10px auto;
+      padding: 16px;
+      width: 90%;
+      border: none;
+      border-radius: 6px;
+      background: #3498db;
+      color: white;
+      cursor: pointer;
+      font-size: 18px;
+    }
+    .options button:hover { background: #2980b9; }
+    .feedback { margin: 15px 0; font-weight: bold; }
+    .maze {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(40px, 12vw));
+      grid-gap: 5px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+    .cell {
+      width: 12vw;
+      max-width: 50px;
+      height: 12vw;
+      max-height: 50px;
+      background: #ddd;
+      border-radius: 5px;
+    }
+    .cell.active { background: #27ae60; }
+    .cell.start { background: #2980b9; }
+    .cell.exit { background: #f39c12; }
+    .timer { font-size: 18px; color: #e74c3c; margin: 10px 0; }
+    .progress-container {
+      width: 100%;
+      background: #ddd;
+      border-radius: 8px;
+      margin: 15px 0;
+      height: 20px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #27ae60;
+      transition: width 0.5s ease;
+    }
+    .review {
+      text-align: left;
+      margin-top: 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="game-container">
+    <h1>🌀 Escape the Info Maze</h1>
+    <p style="font-size:14px;color:#555;">
+      Best experience on laptop • Mobile preview supported
+    </p>
+
+    <p>Enter your name to begin:</p>
+    <input type="text" id="playerName" placeholder="Your Name">
+    <br><br>
+    <button onclick="startGame()">Start Game</button>
+
+    <div id="game"></div>
+    <div class="timer" id="timer"></div>
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <div class="maze" id="maze"></div>
+    <div class="score" id="score"></div>
+  </div>
+
+<script>
+const maze = [
+  {
+    scenario: "A staff member updates the AO25 dashboard using data from an email that has not yet been formally cleared. What should be done?",
+    options: [
+      "Update immediately since the data is available",
+      "Wait for cleared and approved inputs before updating",
+      "Upload the data but label it as “unofficial”"
+    ],
+    answer: 1,
+    explanation: "Only cleared and approved data may be used for official AO25 dashboard updates."
+  },
+  {
+    scenario: "The Data Systems team notices that an agency’s eligibility appears incorrect and decides to revise it in the system. Is this allowed?",
+    options: [
+      "Yes, to ensure accuracy",
+      "No, the function does not determine or modify eligibility outcomes",
+      "Yes, if the correction is minor"
+    ],
+    answer: 1,
+    explanation: "The function manages systems but does not determine or alter eligibility or outcomes."
+  },
+  {
+    scenario: "A new scorecard template is created by a staff member without consulting guidelines. What is the correct rule?",
+    options: [
+      "Templates can be modified anytime",
+      "Templates must align with approved guidelines",
+      "Templates can be changed if teammates agree"
+    ],
+    answer: 1,
+    explanation: "All templates must follow approved standards to ensure consistency and compliance."
+  },
+  {
+    scenario: "A staff member uploads an agency scorecard before it receives formal clearance. What is the correct action?",
+    options: [
+      "Upload immediately",
+      "Upload only after clearance and authorization",
+      "Upload and replace later"
+    ],
+    answer: 1,
+    explanation: "Uploading scorecards requires prior clearance and authorization."
+  },
+  {
+    scenario: "An employee encodes compliance status based on verbal confirmation. What should be done?",
+    options: [
+      "Encode immediately",
+      "Encode only after cleared outputs",
+      "Encode but flag it"
+    ],
+    answer: 1,
+    explanation: "Verbal confirmation is not a valid basis for encoding official compliance data."
+  },
+  {
+    scenario: "Someone requests unrestricted access to the AO25 database. What is the correct response?",
+    options: [
+      "Grant access",
+      "Give temporary access",
+      "Apply access controls"
+    ],
+    answer: 2,
+    explanation: "Access must be restricted to authorized users based on defined controls."
+  },
+  {
+    scenario: "The team modifies data based on stakeholder interpretation. Is this appropriate?",
+    options: [
+      "Yes",
+      "No, only approved inputs must be reflected",
+      "Yes, if documented"
+    ],
+    answer: 1,
+    explanation: "Only approved and cleared inputs may be reflected in official data systems."
+  },
+  {
+    scenario: "Why is version control important?",
+    options: [
+      "To track changes and ensure integrity",
+      "To limit access",
+      "To simplify reports"
+    ],
+    answer: 0,
+    explanation: "Version control ensures traceability, accountability, and data integrity."
+  },
+  {
+    scenario: "Managing the AO25 dashboard includes:",
+    options: [
+      "Determining eligibility",
+      "Updating based on approved data",
+      "Interpreting compliance rules"
+    ],
+    answer: 1,
+    explanation: "Dashboard management reflects approved data only and does not involve interpretation."
+  },
+  {
+    scenario: "What best describes the function’s role?",
+    options: [
+      "Determines outcomes",
+      "Manages systems using validated data",
+      "Provides policy interpretation"
+    ],
+    answer: 1,
+    explanation: "The function supports systems using validated data and does not make policy or outcome decisions."
+  }
+];
+
+let current = 0;
+let score = 0;
+let timer;
+let timeTaken = 0;
+let playerName = "";
+let reviewLog = [];
+
+function startGame() {
+  playerName = document.getElementById("playerName").value || "Anonymous";
+  current = 0;
+  score = 0;
+  timeTaken = 0;
+  reviewLog = [];
+  buildMaze();
+  loadNode();
+  updateProgress();
+}
+
+function buildMaze() {
+  const mazeGrid = document.getElementById("maze");
+  mazeGrid.innerHTML = "";
+  for (let i = 0; i < maze.length; i++) {
+    const cell = document.createElement("div");
+    cell.classList.add("cell");
+    if (i === 0) cell.classList.add("start");
+    if (i === maze.length - 1) cell.classList.add("exit");
+    mazeGrid.appendChild(cell);
+  }
+}
+
+function loadNode() {
+  clearInterval(timer);
+  if (current < maze.length) {
+    const q = maze[current];
+    document.getElementById("game").innerHTML = `
+      <div class="scenario">${q.scenario}</div>
+      <div class="options">
+        ${q.options.map((opt, i) =>
+          `<button onclick="checkPath(${i})">${opt}</button>`
+        ).join("")}
+      </div>`;
+    startTimer();
+    updateProgress();
+  } else {
+    endMaze();
+  }
+}
+
+function startTimer() {
+  let timeLeft = 10;
+  document.getElementById("timer").innerText = `⏱ Time left: ${timeLeft}s`;
+  timer = setInterval(() => {
+    timeLeft--;
+    timeTaken++;
+    document.getElementById("timer").innerText = `⏱ Time left: ${timeLeft}s`;
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      document.getElementById("feedback").innerText = "⏳ Time's up! Back to start.";
+      current = 0;
+      score = 0;
+      buildMaze();
+      updateProgress();
+      setTimeout(() => {
+        document.getElementById("feedback").innerText = "";
+        loadNode();
+      }, 1500);
+    }
+  }, 1000);
+}
+
+function checkPath(choice) {
+  clearInterval(timer);
+  const q = maze[current];
+
+  reviewLog.push({
+    scenario: q.scenario,
+    chosen: q.options[choice],
+    correct: q.options[q.answer],
+    explanation: q.explanation,
+    isCorrect: choice === q.answer
+  });
+
+  if (choice === q.answer) {
+    document.getElementById("feedback").innerText = "✅ Correct path!";
+    score++;
+    document.getElementsByClassName("cell")[current].classList.add("active");
+    current++;
+  } else {
+    document.getElementById("feedback").innerText = "❌ Dead end! Back to start.";
+    current = 0;
+    score = 0;
+    buildMaze();
+  }
+
+  updateProgress();
+  setTimeout(() => {
+    document.getElementById("feedback").innerText = "";
+    loadNode();
+  }, 1500);
+}
+
+function updateProgress() {
+  document.getElementById("progressBar").style.width =
+    (current / maze.length) * 100 + "%";
+}
+
+function endMaze() {
+  clearInterval(timer);
+  let reviewHTML = "<div class='review'><h3>📘 Scenario Review</h3>";
+
+  reviewLog.forEach((item, i) => {
+    reviewHTML += `
+      <p><strong>Scenario ${i + 1}:</strong> ${item.scenario}<br>
+      <strong>Your answer:</strong> ${item.chosen}<br>
+      <strong>Correct answer:</strong> ${item.correct}<br>
+      <em>${item.explanation}</em></p>`;
+  });
+
+  reviewHTML += "</div>";
+
+  document.getElementById("game").innerHTML =
+    "<h2>🎉 You reached the Compliance Exit!</h2>" + reviewHTML;
+
+  document.getElementById("score").innerText =
+    `Player: ${playerName} | Final Score: ${score}/${maze.length} | Time: ${timeTaken}s`;
+
+  document.getElementById("progressBar").style.width = "100%";
+}
+</script>
+</body>
+</html>
