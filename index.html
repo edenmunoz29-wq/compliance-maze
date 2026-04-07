@@ -13,12 +13,6 @@ body {
   color: #e5e7eb;
   text-align: center;
   padding: 20px;
-  animation: fadeIn 0.8s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
 }
 
 .game-container {
@@ -30,10 +24,7 @@ body {
   box-shadow: 0 20px 40px rgba(0,0,0,0.6);
 }
 
-h1 {
-  color: #93c5fd;
-  margin-bottom: 8px;
-}
+h1 { color: #93c5fd; }
 
 .role-desc {
   border: 1px solid #1e293b;
@@ -81,12 +72,6 @@ input {
   border: 1px solid #334155;
   font-size: 17px;
   cursor: pointer;
-  transition: transform 0.15s ease;
-}
-
-.options button:hover {
-  transform: translateY(-2px);
-  background: #334155;
 }
 
 .feedback {
@@ -166,7 +151,7 @@ input {
 </div>
 
 <script>
-/* ---------- SCENARIOS (NO EXPLANATIONS SHOWN) ---------- */
+/* ---------- SCENARIOS ---------- */
 const maze = [
   { scenario: "A staff member updates the AO25 dashboard using uncleared email data.", options: ["Update immediately", "Wait for approved inputs", "Upload as unofficial"], answer: 1 },
   { scenario: "Eligibility appears incorrect in the system.", options: ["Correct it", "Do not modify eligibility outcomes", "Fix minor error"], answer: 1 },
@@ -182,6 +167,7 @@ const maze = [
 
 let current = 0, score = 0;
 let timer, timeLeft = 10;
+let totalTime = 0; // ✅ TOTAL TIME TRACKER
 
 function getRoleStatus() {
   if (current < 3) return "Trainee";
@@ -191,7 +177,7 @@ function getRoleStatus() {
 }
 
 function startSimulation() {
-  current = score = 0;
+  current = score = totalTime = 0;
   buildMaze();
   loadNode();
 }
@@ -216,6 +202,7 @@ function startTimer() {
 
   timer = setInterval(() => {
     timeLeft--;
+    totalTime++; // ✅ COUNT TOTAL TIME
     timerEl.innerText = `⏳ Clearance window: ${timeLeft}s`;
 
     if (timeLeft <= 0) {
@@ -245,35 +232,4 @@ function loadNode() {
 function checkPath(choice) {
   clearInterval(timer);
   if (choice === maze[current].answer) {
-    document.getElementsByClassName("cell")[current].classList.add("active");
-    document.getElementById("feedback").innerText = "✅ Approved input accepted.";
-    current++; score++;
-  } else {
-    document.getElementById("feedback").innerText =
-      "🚫 Compliance control triggered. Workflow reset.";
-    current = score = 0;
-    buildMaze();
-  }
-  setTimeout(() => {
-    document.getElementById("feedback").innerText = "";
-    loadNode();
-  }, 1200);
-}
-
-function updateProgress() {
-  document.getElementById("progressBar").style.width =
-    (current / maze.length) * 100 + "%";
-  document.getElementById("statusLine").innerText =
-    `Current Status: ${getRoleStatus()}`;
-}
-
-function endSimulation() {
-  document.getElementById("game").innerHTML = `
-    <h2>✅ Simulation Complete</h2>
-    <p><strong>Final Role:</strong> ${getRoleStatus()}</p>
-    <p><strong>Score:</strong> ${score} / ${maze.length}</p>
-  `;
-}
-</script>
-</body>
-</html>
+    document.getElementsByClassName("cell")[current].
