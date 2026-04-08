@@ -1,35 +1,32 @@
-Here’s the complete code:
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AO25 Compliance Simulation</title>
-
 <style>
-body { font-family: "Segoe UI", Roboto, Arial, sans-serif; background: linear-gradient(135deg, #0f172a, #020617); color: #e5e7eb; text-align: center; padding: 20px; animation: fadeIn 0.8s ease; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-.game-container { max-width: 900px; margin: auto; background: #020617; padding: 36px; border-radius: 18px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
-h1 { color: #93c5fd; margin-bottom: 8px; }
-.role-desc { border: 1px solid #1e293b; border-radius: 12px; padding: 14px; font-size: 14px; color: #cbd5f5; margin-bottom: 24px; }
-input { padding: 12px; border-radius: 10px; border: none; width: 65%; background: #0f172a; color: #e5e7eb; }
-.start-btn { padding: 14px 28px; border-radius: 14px; background: linear-gradient(90deg, #22c55e, #14b8a6); border: none; color: #020617; font-weight: 600; cursor: pointer; margin-top: 15px; }
-.scenario { font-size: 22px; font-weight: 600; margin: 28px 0; }
-.options button { display: block; margin: 12px auto; padding: 16px 20px; width: 92%; border-radius: 14px; background: #1e293b; color: #e5e7eb; border: 1px solid #334155; font-size: 17px; cursor: pointer; transition: transform 0.15s ease; }
-.options button:hover { transform: translateY(-2px); background: #334155; }
-.feedback { margin: 18px 0; font-weight: 600; color: #fde68a; }
-.timer { color: #f97316; margin: 10px 0; }
-.progress-container { width: 100%; background: #1e293b; border-radius: 20px; margin: 18px 0; height: 18px; }
-.progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #22c55e, #14b8a6); transition: width 0.5s ease; }
-.status-line { font-size: 15px; color: #cbd5e1; }
-.maze { display: grid; grid-template-columns: repeat(5, 46px); gap: 7px; justify-content: center; margin: 26px auto; }
-.cell { width: 46px; height: 46px; background: #1e293b; border-radius: 8px; }
-.cell.start { background: #2563eb; }
-.cell.active { background: #22c55e; }
-.cell.exit { background: #f59e0b; }
+/* --- Styling --- */
+body { font-family: "Segoe UI", Roboto, Arial, sans-serif; background: linear-gradient(135deg,#0f172a,#020617); color:#e5e7eb; text-align:center; padding:20px; }
+.game-container { max-width:900px; margin:auto; background:#020617; padding:36px; border-radius:18px; box-shadow:0 20px 40px rgba(0,0,0,0.6); }
+h1 { color:#93c5fd; margin-bottom:8px; }
+.role-desc { border:1px solid #1e293b; border-radius:12px; padding:14px; font-size:14px; color:#cbd5f5; margin-bottom:24px; }
+input { padding:12px; border-radius:10px; border:none; width:65%; background:#0f172a; color:#e5e7eb; }
+.start-btn { padding:14px 28px; border-radius:14px; background:linear-gradient(90deg,#22c55e,#14b8a6); border:none; color:#020617; font-weight:600; cursor:pointer; margin-top:15px; }
+.scenario { font-size:22px; font-weight:600; margin:28px 0; }
+.options button { display:block; margin:12px auto; padding:16px 20px; width:92%; border-radius:14px; background:#1e293b; color:#e5e7eb; border:1px solid #334155; font-size:17px; cursor:pointer; }
+.options button:hover { background:#334155; }
+.feedback { margin:18px 0; font-weight:600; color:#fde68a; }
+.timer { color:#f97316; margin:10px 0; }
+.progress-container { width:100%; background:#1e293b; border-radius:20px; margin:18px 0; height:18px; }
+.progress-bar { height:100%; width:0%; background:linear-gradient(90deg,#22c55e,#14b8a6); transition:width 0.5s ease; }
+.status-line { font-size:15px; color:#cbd5e1; }
+.maze { display:grid; grid-template-columns:repeat(5,46px); gap:7px; justify-content:center; margin:26px auto; }
+.cell { width:46px; height:46px; background:#1e293b; border-radius:8px; }
+.cell.start { background:#2563eb; }
+.cell.active { background:#22c55e; }
+.cell.exit { background:#f59e0b; }
 </style>
 </head>
-
 <body>
 <div class="game-container">
   <h1>🛡️ AO25 Compliance Simulation</h1>
@@ -37,18 +34,12 @@ input { padding: 12px; border-radius: 10px; border: none; width: 65%; background
     <strong>Role:</strong> AO25 Information Custodian<br>
     <strong>Objective:</strong> Make decisions using only cleared and approved inputs.
   </div>
-
   <input id="playerName" placeholder="Your Name"><br>
   <button class="start-btn" onclick="startSimulation()">Begin Simulation</button>
-
   <div id="welcome"></div>
   <div id="game"></div>
   <div class="timer" id="timer"></div>
-
-  <div class="progress-container">
-    <div class="progress-bar" id="progressBar"></div>
-  </div>
-
+  <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
   <div class="status-line" id="statusLine"></div>
   <div class="feedback" id="feedback"></div>
   <div class="maze" id="maze"></div>
@@ -56,80 +47,72 @@ input { padding: 12px; border-radius: 10px; border: none; width: 65%; background
 
 <script>
 const maze = [
-  { scenario: "A staff member updates the AO25 dashboard using uncleared email data.", options: ["Update immediately", "Wait for approved inputs", "Upload as unofficial"], answer: 1 },
-  { scenario: "Eligibility appears incorrect in the system.", options: ["Correct it", "Do not modify eligibility outcomes", "Fix minor error"], answer: 1 },
-  { scenario: "A new scorecard template is created informally.", options: ["Allow it", "Align with approved guidelines", "Approve by consensus"], answer: 1 },
-  { scenario: "An agency scorecard lacks clearance.", options: ["Upload now", "Upload after clearance", "Upload temporarily"], answer: 1 },
-  { scenario: "Compliance status is based on verbal confirmation.", options: ["Encode immediately", "Wait for cleared outputs", "Encode and flag"], answer: 1 },
-  { scenario: "A request is made for unrestricted DB access.", options: ["Grant access", "Temporary access", "Apply access controls"], answer: 2 },
-  { scenario: "Data modified based on interpretation.", options: ["Accept", "Reflect approved inputs only", "Accept if documented"], answer: 1 },
-  { scenario: "Why is version control important?", options: ["Tracking & integrity", "Limit access", "Simplify design"], answer: 0 },
-  { scenario: "Dashboard management includes:", options: ["Determining eligibility", "Updating approved data", "Interpret rules"], answer: 1 },
-  { scenario: "Function role is to:", options: ["Determine outcomes", "Manage systems with validated data", "Interpret policy"], answer: 1 }
+  { scenario:"A staff member updates the AO25 dashboard using uncleared email data.", options:["Update immediately","Wait for approved inputs","Upload as unofficial"], answer:1 },
+  { scenario:"Eligibility appears incorrect in the system.", options:["Correct it","Do not modify eligibility outcomes","Fix minor error"], answer:1 },
+  { scenario:"A new scorecard template is created informally.", options:["Allow it","Align with approved guidelines","Approve by consensus"], answer:1 },
+  { scenario:"An agency scorecard lacks clearance.", options:["Upload now","Upload after clearance","Upload temporarily"], answer:1 },
+  { scenario:"Compliance status is based on verbal confirmation.", options:["Encode immediately","Wait for cleared outputs","Encode and flag"], answer:1 },
+  { scenario:"A request is made for unrestricted DB access.", options:["Grant access","Temporary access","Apply access controls"], answer:2 },
+  { scenario:"Data modified based on interpretation.", options:["Accept","Reflect approved inputs only","Accept if documented"], answer:1 },
+  { scenario:"Why is version control important?", options:["Tracking & integrity","Limit access","Simplify design"], answer:0 },
+  { scenario:"Dashboard management includes:", options:["Determining eligibility","Updating approved data","Interpret rules"], answer:1 },
+  { scenario:"Function role is to:", options:["Determine outcomes","Manage systems with validated data","Interpret policy"], answer:1 }
 ];
 
-let current = 0, score = 0;
-let timer, timeLeft = 10;
-let quizStartTime;
-let playerName = "";
+let current=0, score=0, timer, timeLeft=10, quizStartTime, playerName="";
 
-function getRoleStatus() {
-  if (current < 3) return "Trainee";
-  if (current < 6) return "Compliance Officer";
-  if (current < 9) return "Information Custodian";
+function getRoleStatus(){
+  if(current<3) return "Trainee";
+  if(current<6) return "Compliance Officer";
+  if(current<9) return "Information Custodian";
   return "Governance Champion";
 }
 
-function startSimulation() {
-  playerName = document.getElementById("playerName").value.trim();
-  if (!playerName) {
-    alert("Please enter your name before starting the simulation.");
-    return;
-  }
-  document.getElementById("welcome").innerHTML = `<p>👋 Welcome, <strong>${playerName}</strong>! Good luck on your compliance journey.</p>`;
-  current = score = 0;
-  quizStartTime = Date.now();
+function startSimulation(){
+  playerName=document.getElementById("playerName").value.trim();
+  if(!playerName){ alert("Please enter your name before starting."); return; }
+  document.getElementById("welcome").innerHTML=`<p>👋 Welcome, <strong>${playerName}</strong>! Good luck.</p>`;
+  current=score=0;
+  quizStartTime=Date.now();
   buildMaze();
   loadNode();
 }
 
-function buildMaze() {
-  const grid = document.getElementById("maze");
-  grid.innerHTML = "";
-  maze.forEach((_, i) => {
-    const cell = document.createElement("div");
-    cell.className = "cell";
-    if (i === 0) cell.classList.add("start");
-    if (i === maze.length - 1) cell.classList.add("exit");
+function buildMaze(){
+  const grid=document.getElementById("maze");
+  grid.innerHTML="";
+  maze.forEach((_,i)=>{
+    const cell=document.createElement("div");
+    cell.className="cell";
+    if(i===0) cell.classList.add("start");
+    if(i===maze.length-1) cell.classList.add("exit");
     grid.appendChild(cell);
   });
 }
 
-function startTimer() {
+function startTimer(){
   clearInterval(timer);
-  timeLeft = 10;
-  const timerEl = document.getElementById("timer");
-  timerEl.innerText = `⏳ Clearance window: ${timeLeft}s`;
-
-  timer = setInterval(() => {
+  timeLeft=10;
+  const timerEl=document.getElementById("timer");
+  timerEl.innerText=`⏳ Clearance window: ${timeLeft}s`;
+  timer=setInterval(()=>{
     timeLeft--;
-    timerEl.innerText = `⏳ Clearance window: ${timeLeft}s`;
-    if (timeLeft <= 0) {
+    timerEl.innerText=`⏳ Clearance window: ${timeLeft}s`;
+    if(timeLeft<=0){
       clearInterval(timer);
-      document.getElementById("feedback").innerText =
-        "⚠️ Clearance window expired. Workflow reset.";
-      current = score = 0;
+      document.getElementById("feedback").innerText="⚠️ Clearance window expired. Workflow reset.";
+      current=score=0;
       buildMaze();
       updateProgress();
-      setTimeout(loadNode, 1500);
+      setTimeout(loadNode,1500);
     }
-  }, 1000);
+  },1000);
 }
 
-function loadNode() {
-  if (current >= maze.length) return endSimulation();
-  const q = maze[current];
-  document.getElementById("game").innerHTML = `
+function loadNode(){
+  if(current>=maze.length){ endSimulation(); return; }
+  const q=maze[current];
+  document.getElementById("game").innerHTML=`
     <div class="scenario">${q.scenario}</div>
     <div class="options">
       ${q.options.map((o,i)=>`<button onclick="checkPath(${i})">${o}</button>`).join("")}
@@ -138,174 +121,32 @@ function loadNode() {
   startTimer();
 }
 
-function checkPath(choice) {
+function checkPath(choice){
   clearInterval(timer);
-  if (choice === maze[current].answer) {
+  if(choice===maze[current].answer){
     document.getElementsByClassName("cell")[current].classList.add("active");
-    document.getElementById("feedback").innerText = "✅ Approved input accepted.";
+    document.getElementById("feedback").innerText="✅ Approved input accepted.";
     current++; score++;
   } else {
-    document.getElementById("feedback").innerText =
-      "🚫 Compliance control triggered. Workflow reset.";
-    current = score = 0;
+    document.getElementById("feedback").innerText="🚫 Compliance control triggered. Workflow reset.";
+    current=score=0;
     buildMaze();
   }
-  setTimeout(() => {
-    document.getElementById("feedback").innerTextThanks for your patience — the reason it “stops” after clicking **Begin Simulation** is that your script was cut off before the end, so the browser never had a complete set of functions to run. Here’s a **fully working HTML file** you can copy‑paste into one piece and run. It includes:
-
-- Name requirement before starting.  
-- Welcome message with the player’s name.  
-- Personalized final results (“Congratulations, Alex!”).  
-- Total quiz duration in minutes.  
-- Progress bar filling to 100% at the end.  
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AO25 Compliance Simulation</title>
-<style>
-body { font-family: "Segoe UI", Roboto, Arial, sans-serif; background: linear-gradient(135deg, #0f172a, #020617); color: #e5e7eb; text-align: center; padding: 20px; animation: fadeIn 0.8s ease; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-.game-container { max-width: 900px; margin: auto; background: #020617; padding: 36px; border-radius: 18px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
-h1 { color: #93c5fd; margin-bottom: 8px; }
-.role-desc { border: 1px solid #1e293b; border-radius: 12px; padding: 14px; font-size: 14px; color: #cbd5f5; margin-bottom: 24px; }
-input { padding: 12px; border-radius: 10px; border: none; width: 65%; background: #0f172a; color: #e5e7eb; }
-.start-btn { padding: 14px 28px; border-radius: 14px; background: linear-gradient(90deg, #22c55e, #14b8a6); border: none; color: #020617; font-weight: 600; cursor: pointer; margin-top: 15px; }
-.scenario { font-size: 22px; font-weight: 600; margin: 28px 0; }
-.options button { display: block; margin: 12px auto; padding: 16px 20px; width: 92%; border-radius: 14px; background: #1e293b; color: #e5e7eb; border: 1px solid #334155; font-size: 17px; cursor: pointer; transition: transform 0.15s ease; }
-.options button:hover { transform: translateY(-2px); background: #334155; }
-.feedback { margin: 18px 0; font-weight: 600; color: #fde68a; }
-.timer { color: #f97316; margin: 10px 0; }
-.progress-container { width: 100%; background: #1e293b; border-radius: 20px; margin: 18px 0; height: 18px; }
-.progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #22c55e, #14b8a6); transition: width 0.5s ease; }
-.status-line { font-size: 15px; color: #cbd5e1; }
-.maze { display: grid; grid-template-columns: repeat(5, 46px); gap: 7px; justify-content: center; margin: 26px auto; }
-.cell { width: 46px; height: 46px; background: #1e293b; border-radius: 8px; }
-.cell.start { background: #2563eb; }
-.cell.active { background: #22c55e; }
-.cell.exit { background: #f59e0b; }
-</style>
-</head>
-
-<body>
-<div class="game-container">
-  <h1>🛡️ AO25 Compliance Simulation</h1>
-  <div class="role-desc">
-    <strong>Role:</strong> AO25 Information Custodian<br>
-    <strong>Objective:</strong> Make decisions using only cleared and approved inputs.
-  </div>
-
-  <input id="playerName" placeholder="Your Name"><br>
-  <button class="start-btn" onclick="startSimulation()">Begin Simulation</button>
-
-  <div id="welcome"></div>
-  <div id="game"></div>
-  <div class="timer" id="timer"></div>
-
-  <div class="progress-container">
-    <div class="progress-bar" id="progressBar"></div>
-  </div>
-
-  <div class="status-line" id="statusLine"></div>
-  <div class="feedback" id="feedback"></div>
-  <div class="maze" id="maze"></div>
-</div>
-
-<script>
-const maze = [
-  { scenario: "A staff member updates the AO25 dashboard using uncleared email data.", options: ["Update immediately", "Wait for approved inputs", "Upload as unofficial"], answer: 1 },
-  { scenario: "Eligibility appears incorrect in the system.", options: ["Correct it", "Do not modify eligibility outcomes", "Fix minor error"], answer: 1 },
-  { scenario: "A new scorecard template is created informally.", options: ["Allow it", "Align with approved guidelines", "Approve by consensus"], answer: 1 },
-  { scenario: "An agency scorecard lacks clearance.", options: ["Upload now", "Upload after clearance", "Upload temporarily"], answer: 1 },
-  { scenario: "Compliance status is based on verbal confirmation.", options: ["Encode immediately", "Wait for cleared outputs", "Encode and flag"], answer: 1 },
-  { scenario: "A request is made for unrestricted DB access.", options: ["Grant access", "Temporary access", "Apply access controls"], answer: 2 },
-  { scenario: "Data modified based on interpretation.", options: ["Accept", "Reflect approved inputs only", "Accept if documented"], answer: 1 },
-  { scenario: "Why is version control important?", options: ["Tracking & integrity", "Limit access", "Simplify design"], answer: 0 },
-  { scenario: "Dashboard management includes:", options: ["Determining eligibility", "Updating approved data", "Interpret rules"], answer: 1 },
-  { scenario: "Function role is to:", options: ["Determine outcomes", "Manage systems with validated data", "Interpret policy"], answer: 1 }
-];
-
-let current = 0, score = 0;
-let timer, timeLeft = 10;
-let quizStartTime;
-let playerName = "";
-
-function getRoleStatus() {
-  if (current < 3) return "Trainee";
-  if (current < 6) return "Compliance Officer";
-  if (current < 9) return "Information Custodian";
-  return "Governance Champion";
+  setTimeout(()=>{ document.getElementById("feedback").innerText=""; loadNode(); },1200);
 }
 
-function startSimulation() {
-  playerName = document.getElementById("playerName").value.trim();
-  if (!playerName) {
-    alert("Please enter your name before starting the simulation.");
-    return;
-  }
-  document.getElementById("welcome").innerHTML = `<p>👋 Welcome, <strong>${playerName}</strong>! Good luck on your compliance journey.</p>`;
-  current = score = 0;
-  quizStartTime = Date.now();
-  buildMaze();
-  loadNode();
+function updateProgress(){
+  const progress=(current/maze.length)*100;
+  document.getElementById("progressBar").style.width=(progress>=100?100:progress)+"%";
+  document.getElementById("statusLine").innerText=`Current Status: ${getRoleStatus()}`;
 }
 
-function buildMaze() {
-  const grid = document.getElementById("maze");
-  grid.innerHTML = "";
-  maze.forEach((_, i) => {
-    const cell = document.createElement("div");
-    cell.className = "cell";
-    if (i === 0) cell.classList.add("start");
-    if (i === maze.length - 1) cell.classList.add("exit");
-    grid.appendChild(cell);
-  });
-}
-
-function startTimer() {
-  clearInterval(timer);
-  timeLeft = 10;
-  const timerEl = document.getElementById("timer");
-  timerEl.innerText = `⏳ Clearance window: ${timeLeft}s`;
-
-  timer = setInterval(() => {
-    timeLeft--;
-    timerEl.innerText = `⏳ Clearance window: ${timeLeft}s`;
-    if (timeLeft <= 0) {
-      clearInterval(timer);
-      document.getElementById("feedback").innerText =
-        "⚠️ Clearance window expired. Workflow reset.";
-      current = score = 0;
-      buildMaze();
-      updateProgress();
-      setTimeout(loadNode, 1500);
-    }
-  }, 1000);
-}
-
-function loadNode() {
-  if (current >= maze.length) return endSimulation();
-  const q = maze[current];
-  document.getElementById("game").innerHTML = `
-    <div class="scenario">${q.scenario}</div>
-    <div class="options">
-      ${q.options.map((o,i)=>`<button onclick="checkPath(${i})">${o}</button>`).join("")}
-    </div>`;
-  updateProgress();
-  startTimer();
-}
-
-function checkPath(choice) {
-  clearInterval(timer);
-  if (choice === maze[current].answer) {
-    document.getElementsByClassName("cell")[current].classList.add("active");
-    document.getElementById("feedback").innerText = "✅ Approved input accepted.";
-    current++; score++;
-  } else {
-    document.getElementById("feedback").innerText =
-      "🚫 Compliance control triggered
+function endSimulation(){
+  const totalTimeMs=Date.now()-quizStartTime;
+  const totalMinutes=(totalTimeMs/60000).toFixed(2);
+  document.getElementById("game").innerHTML=`
+    <h2>✅ Simulation Complete</h2>
+    <p><strong>Congratulations, ${playerName}!</strong></p>
+    <p><strong>Final Role:</strong> ${getI’ve checked your code carefully — the reason nothing happens after clicking **Begin Simulation** is that your `<script>` block was incomplete. The functions `updateProgress()` and `endSimulation()` were cut off, so when `loadNode()` tries to call them
 
 
