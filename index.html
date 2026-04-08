@@ -55,7 +55,7 @@ const maze = [
   { scenario:"Function role is to:", options:["Determine outcomes","Manage systems with validated data","Interpret policy"], answer:1 }
 ];
 
-let current=0, score=0, timer, timeTaken=0, playerName="";
+let current=0, score=0, timer, timeTaken=0, playerName="", startTime=0;
 
 function getRoleStatus(){
   if(current<3) return "Trainee";
@@ -68,6 +68,7 @@ function startGame(){
   playerName=document.getElementById("playerName").value.trim()||"Anonymous";
   document.getElementById("welcome").innerHTML=`👋 Welcome, <strong>${playerName}</strong>!`;
   current=0; score=0; timeTaken=0;
+  startTime = Date.now(); // record start time
   buildMaze(); loadNode(); updateProgress();
 }
 
@@ -121,9 +122,16 @@ function updateProgress(){
 
 function endMaze(){
   clearInterval(timer);
+  const totalDuration = Math.floor((Date.now() - startTime)/1000); // total elapsed time
+  const minutes = Math.floor(totalDuration/60);
+  const seconds = totalDuration%60;
   document.getElementById("game").innerHTML="<h2>🎉 Simulation Complete</h2>";
   document.getElementById("score").innerText=
-    `Player: ${playerName}\nFinal Role: ${getRoleStatus()}\nScore: ${score}/${maze.length}\nTime Taken: ${timeTaken} seconds`;
+    `Player: ${playerName}
+Final Role: ${getRoleStatus()}
+Score: ${score}/${maze.length}
+Time Taken (per question): ${timeTaken} seconds
+Complete Duration: ${minutes}m ${seconds}s`;
   document.getElementById("progressBar").style.width="100%";
 }
 </script>
