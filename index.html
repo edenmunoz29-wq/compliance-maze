@@ -41,19 +41,59 @@ button { padding:12px 24px; margin-top:10px; border:none; border-radius:10px; ba
   <div class="score" id="score"></div>
 </div>
 
-<script>
 const maze = [
-  { scenario:"A staff member updates the AO25 dashboard using uncleared email data.", options:["Update immediately","Wait for approved inputs","Upload as unofficial"], answer:1 },
-  { scenario:"Eligibility appears incorrect in the system.", options:["Correct it","Do not modify eligibility outcomes","Fix minor error"], answer:1 },
-  { scenario:"A new scorecard template is created informally.", options:["Allow it","Align with approved guidelines","Approve by consensus"], answer:1 },
-  { scenario:"An agency scorecard lacks clearance.", options:["Upload now","Upload after clearance","Upload temporarily"], answer:1 },
-  { scenario:"Compliance status is based on verbal confirmation.", options:["Encode immediately","Wait for cleared outputs","Encode and flag"], answer:1 },
-  { scenario:"A request is made for unrestricted DB access.", options:["Grant access","Temporary access","Apply access controls"], answer:2 },
-  { scenario:"Data modified based on interpretation.", options:["Accept","Reflect approved inputs only","Accept if documented"], answer:1 },
-  { scenario:"Why is version control important?", options:["Tracking & integrity","Limit access","Simplify design"], answer:0 },
-  { scenario:"Dashboard management includes:", options:["Determining eligibility","Updating approved data","Interpret rules"], answer:1 },
-  { scenario:"Function role is to:", options:["Determine outcomes","Manage systems with validated data","Interpret policy"], answer:1 }
+  { 
+    scenario: "An employee updates the official PBB tracker based on a draft eligibility list not yet cleared under Part IV.", 
+    options: ["Update immediately to save time","Wait until cleared outputs before updating","Update but mark as unofficial"], 
+    answer: 1 
+  },
+  { 
+    scenario: "A staff member creates a new dashboard showing agency rankings based on their own analysis and shares it with management.", 
+    options: ["Yes, dashboards can generate new results","No, data systems reflect approved outcomes only","Yes, if management requested it"], 
+    answer: 1 
+  },
+  { 
+    scenario: "Someone requests access to the official database to check agency scores, but they are not part of the function handling the database.", 
+    options: ["Give access to promote transparency","Provide screenshots instead","Grant access only if authorized"], 
+    answer: 2 
+  },
+  { 
+    scenario: "A staff member updates a scorecard template format without approval because it looks outdated.", 
+    options: ["Templates can be modified anytime","Only approved formats must be maintained","Templates can be modified if minor"], 
+    answer: 1 
+  },
+  { 
+    scenario: "An officer sends guidance to agencies explaining eligibility interpretation, even though it was not officially cleared.", 
+    options: ["Yes, to help agencies understand faster","No, communications must not introduce interpretation","Yes, if officer is knowledgeable"], 
+    answer: 1 
+  },
+  { 
+    scenario: "The Communications team sends a memo using an old template because it is faster.", 
+    options: ["Use any template available","Use only cleared content and official channels","Send the memo verbally instead"], 
+    answer: 1 
+  },
+  { 
+    scenario: "A staff member encodes data into the system based on verbal instructions, but no cleared document exists yet.", 
+    options: ["Encode based on verbal instruction","Wait for cleared outputs before encoding","Encode but mark as temporary"], 
+    answer: 1 
+  },
+  { 
+    scenario: "The Data Systems team notices an error in eligibility results and corrects the system data on their own.", 
+    options: ["Yes, because they maintain the database","No, systems cannot change outcomes on their own","Yes, if the error is obvious"], 
+    answer: 1 
+  },
+  { 
+    scenario: "A stakeholder asks the Communications team to explain whether their agency is eligible for PBB.", 
+    options: ["Explain eligibility rules and give advice","Provide unofficial guidance","Only disseminate approved information"], 
+    answer: 2 
+  },
+  { 
+    scenario: "Why is version control and access restriction important in data systems?", 
+    options: ["To make the system more complicated","To ensure integrity, audit, and compliance","To limit transparency"], 
+    answer: 1 
+  }
 ];
+
 
 let current=0, score=0, timer, playerName="", startTime=0;
 
