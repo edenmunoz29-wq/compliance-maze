@@ -1,150 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>AO25 Compliance Simulation</title>
-  <style>
-    body { font-family: Arial, sans-serif; background:#f4f6f9; color:#333; text-align:center; padding:20px; }
-    .game-container { max-width:800px; margin:auto; background:#fff; padding:25px; border-radius:10px; box-shadow:0 0 12px rgba(0,0,0,0.15); }
-    h1 { color:#2c3e50; }
-    .scenario { font-weight:bold; font-size:22px; margin:20px 0; }
-    .options button { display:block; margin:10px auto; padding:12px; width:85%; border:none; border-radius:6px; background:#3498db; color:white; cursor:pointer; font-size:15px; }
-    .options button:hover { background:#2980b9; }
-    .feedback { margin:15px 0; font-weight:bold; }
-    .maze { display:grid; grid-template-columns:repeat(5,50px); grid-gap:5px; justify-content:center; margin:20px auto; }
-    .cell { width:50px; height:50px; background:#ddd; border-radius:5px; }
-    .cell.active { background:#27ae60; }
-    .cell.start { background:#2980b9; }
-    .cell.exit { background:#f39c12; }
-    .score { margin-top:20px; font-size:18px; white-space:pre-line; }
-    .timer { font-size:18px; color:#e74c3c; margin:10px 0; }
-    .progress-container { width:100%; background:#ddd; border-radius:8px; margin:15px 0; height:20px; overflow:hidden; }
-    .progress-bar { height:100%; width:0%; background:#27ae60; transition:width 0.5s ease; }
-    .role { font-size:18px; margin:10px 0; color:#2c3e50; }
-  </style>
+<meta charset="UTF-8">
+<title>AO25 Compliance Simulation</title>
 </head>
 <body>
-  <div class="game-container">
-    <h1>🛡️ AO25 Compliance Simulation</h1>
-    <p>Enter your name to begin:</p>
-    <input type="text" id="playerName" placeholder="Your Name">
-    <button onclick="startGame()">Begin Simulation</button>
-    <div id="welcome"></div>
-    <div id="game"></div>
-    <div class="timer" id="timer"></div>
-    <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
-    <div class="role" id="roleStatus"></div>
-    <div class="feedback" id="feedback"></div>
-    <div class="maze" id="maze"></div>
-    <div class="score" id="score"></div>
-  </div>
+<h1>AO25 Compliance Simulation</h1>
+<p>Enter your name:</p>
+<input id="playerName">
+<button onclick="startGame()">Begin Simulation</button>
+<div id="welcome"></div>
+<div id="game"></div>
+<div id="role"></div>
 
 <script>
 const maze = [
-  { scenario:"A dataset arrives without clearance.", options:["Encode immediately","Wait until cleared outputs","Share informally"], answer:1 },
-  { scenario:"Multiple versions of a scorecard template exist.", options:["Allow flexibility","Enforce version control","Delete all copies"], answer:1 },
-  { scenario:"Management requests a report. Which platform should you use?", options:["GEIS or other approved platforms","Any convenient spreadsheet","Personal email attachments"], answer:0 },
-  { scenario:"Someone asks if the data system can generate outcomes.", options:["Yes, it determines outcomes","No, it only reflects approved outcomes","Sometimes, depending on inputs"], answer:1 },
-  { scenario:"A stakeholder requests technical interpretation of compliance rules.", options:["Provide your own interpretation","Disseminate only cleared guidance","Ignore the request"], answer:1 },
-  { scenario:"Sensitive data is requested by an external party.", options:["Share immediately","Refer to compliance office","Send via personal email"], answer:1 },
-  { scenario:"You find outdated compliance documents.", options:["Destroy them","Archive with version labels","Ignore them"], answer:1 },
-  { scenario:"A manager insists on bypassing clearance.", options:["Comply with request","Escalate to compliance authority","Ignore"], answer:1 },
-  { scenario:"Which is the safest way to share compliance updates?", options:["Official platform","Personal chat","Unsecured USB"], answer:0 },
-  { scenario:"End-of-year compliance review requires:", options:["Personal notes only","Cleared institutional report","No documentation"], answer:1 }
+  { scenario:"Dataset arrives without clearance.", options:["Encode","Wait","Share"], answer:1 },
+  { scenario:"Multiple versions exist.", options:["Allow","Enforce","Delete"], answer:1 }
 ];
 
-let current=0, score=0, timer, timeTaken=0, playerName="";
+let current=0, score=0, playerName="";
 
 function getRoleStatus(){
-  if(current<3) return "Trainee";
-  if(current<6) return "Compliance Officer";
-  if(current<9) return "Information Custodian";
-  return "Governance Champion";
+  if(current<1) return "Trainee";
+  if(current<2) return "Compliance Officer";
+  return "Champion";
 }
 
 function startGame(){
   playerName=document.getElementById("playerName").value.trim();
-  if(!playerName){ alert("Please enter your name before starting."); return; }
-  document.getElementById("welcome").innerHTML=`<p>👋 Welcome, <strong>${playerName}</strong>! Good luck.</p>`;
-  current=0; score=0; timeTaken=0;
-  buildMaze();
+  if(!playerName){ alert("Enter your name first."); return; }
+  document.getElementById("welcome").innerText=`Welcome, ${playerName}!`;
+  current=0; score=0;
   loadNode();
-  updateProgress();
-}
-
-function buildMaze(){
-  const mazeGrid=document.getElementById("maze");
-  mazeGrid.innerHTML="";
-  for(let i=0;i<maze.length;i++){
-    const cell=document.createElement("div");
-    cell.classList.add("cell");
-    if(i===0) cell.classList.add("start");
-    if(i===maze.length-1) cell.classList.add("exit");
-    mazeGrid.appendChild(cell);
-  }
 }
 
 function loadNode(){
-  clearInterval(timer);
-  if(current<maze.length){
-    const q=maze[current];
-    document.getElementById("game").innerHTML=`
-      <div class="scenario">${q.scenario}</div>
-      <div class="options">
-        ${q.options.map((opt,i)=>`<button onclick="checkPath(${i})">${opt}</button>`).join("")}
-      </div>`;
-    document.getElementById("roleStatus").innerText=`Current Role: ${getRoleStatus()}`;
-    startTimer();
-    updateProgress();
-  } else {
-    endMaze();
-  }
-}
-
-function startTimer(){
-  let timeLeft=10;
-  document.getElementById("timer").innerText=`⏱ Time left: ${timeLeft}s`;
-  timer=setInterval(()=>{
-    timeLeft--; timeTaken++;
-    document.getElementById("timer").innerText=`⏱ Time left: ${timeLeft}s`;
-    if(timeLeft<=0){
-      clearInterval(timer);
-      document.getElementById("feedback").innerText="⏳ Time's up! Back to start.";
-      current=0; score=0;
-      buildMaze(); updateProgress();
-      setTimeout(()=>{ document.getElementById("feedback").innerText=""; loadNode(); },1500);
-    }
-  },1000);
+  if(current>=maze.length){ endGame(); return; }
+  const q=maze[current];
+  document.getElementById("game").innerHTML=
+    `<p>${q.scenario}</p>`+
+    q.options.map((o,i)=>`<button onclick="checkPath(${i})">${o}</button>`).join("");
+  document.getElementById("role").innerText="Role: "+getRoleStatus();
 }
 
 function checkPath(choice){
-  clearInterval(timer);
-  const q=maze[current];
-  if(choice===q.answer){
-    document.getElementById("feedback").innerText="✅ Correct path!";
-    score++;
-    document.getElementsByClassName("cell")[current].classList.add("active");
-    current++;
-  } else {
-    document.getElementById("feedback").innerText="❌ Dead end! Back to start.";
-    current=0; score=0;
-    buildMaze();
-  }
-  updateProgress();
-  setTimeout(()=>{ document.getElementById("feedback").innerText=""; loadNode(); },1500);
+  if(choice===maze[current].answer){ score++; }
+  current++;
+  loadNode();
 }
 
-function updateProgress(){
-  const progress=(current/maze.length)*100;
-  document.getElementById("progressBar").style.width=progress+"%";
-}
-
-function endMaze(){
-  clearInterval(timer);
-  document.getElementById("game").innerHTML="<h2>🎉 You reached the Compliance Exit!</h2>";
-  document.getElementById("score").innerText=
-    `Player: ${playerName}\nFinal Role: ${getRoleStatus()}\nFinal Score: ${score}/${maze.length}\nTime Taken: ${timeTaken} seconds`;
-  document.getElementById("progressBar").style.width="100%";
+function endGame(){
+  document.getElementById("game").innerHTML=
+    `<h2>Done!</h2><p>${playerName}, final score: ${score}/${maze.length}</p>`;
 }
 </script>
 </body>
