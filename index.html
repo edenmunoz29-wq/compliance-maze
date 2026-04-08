@@ -1,5 +1,3 @@
-I’ve checked your code carefully — the reason the scenarios don’t appear after clicking Begin Simulation is that the script was incomplete in the versions you pasted. The functions updateProgress() and endSimulation() were cut off, so when loadNode() tries to call them, execution halts silently. That’s why you never see the first question.
-Here’s a fully working HTML file with all functions closed properly. I tested the flow: enter a name, click Begin Simulation, and the first scenario appears immediately.
 <!DOCTYPE html>
 <html lang="en">
 <head>
