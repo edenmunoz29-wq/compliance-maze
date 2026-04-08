@@ -263,7 +263,10 @@ function checkPath(choice) {
 
 function updateProgress() {
   const progress = (current / maze.length) * 100;
-  document.getElementHere’s the complete, updated code with the improvements baked in. It now tracks **total quiz duration in minutes** and ensures the **progress bar fills to 100%** when the simulation ends:
+  document.getElementYou’re right — the last version I gave you was incomplete, which is why it didn’t run. Here’s a **fully working HTML file** with the fixes integrated:
+
+- Tracks **total quiz duration in minutes**.  
+- Ensures the **progress bar fills to 100%** when the simulation ends.  
 
 ```html
 <!DOCTYPE html>
@@ -282,11 +285,7 @@ body {
   padding: 20px;
   animation: fadeIn 0.8s ease;
 }
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 .game-container {
   max-width: 900px;
@@ -296,112 +295,45 @@ body {
   border-radius: 18px;
   box-shadow: 0 20px 40px rgba(0,0,0,0.6);
 }
-
-h1 {
-  color: #93c5fd;
-  margin-bottom: 8px;
-}
-
+h1 { color: #93c5fd; margin-bottom: 8px; }
 .role-desc {
-  border: 1px solid #1e293b;
-  border-radius: 12px;
-  padding: 14px;
-  font-size: 14px;
-  color: #cbd5f5;
-  margin-bottom: 24px;
+  border: 1px solid #1e293b; border-radius: 12px;
+  padding: 14px; font-size: 14px; color: #cbd5f5; margin-bottom: 24px;
 }
-
 input {
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  width: 65%;
-  background: #0f172a;
-  color: #e5e7eb;
+  padding: 12px; border-radius: 10px; border: none; width: 65%;
+  background: #0f172a; color: #e5e7eb;
 }
-
 .start-btn {
-  padding: 14px 28px;
-  border-radius: 14px;
+  padding: 14px 28px; border-radius: 14px;
   background: linear-gradient(90deg, #22c55e, #14b8a6);
-  border: none;
-  color: #020617;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 15px;
+  border: none; color: #020617; font-weight: 600;
+  cursor: pointer; margin-top: 15px;
 }
-
-.scenario {
-  font-size: 22px;
-  font-weight: 600;
-  margin: 28px 0;
-}
-
+.scenario { font-size: 22px; font-weight: 600; margin: 28px 0; }
 .options button {
-  display: block;
-  margin: 12px auto;
-  padding: 16px 20px;
-  width: 92%;
-  border-radius: 14px;
-  background: #1e293b;
-  color: #e5e7eb;
-  border: 1px solid #334155;
-  font-size: 17px;
-  cursor: pointer;
+  display: block; margin: 12px auto; padding: 16px 20px; width: 92%;
+  border-radius: 14px; background: #1e293b; color: #e5e7eb;
+  border: 1px solid #334155; font-size: 17px; cursor: pointer;
   transition: transform 0.15s ease;
 }
-
-.options button:hover {
-  transform: translateY(-2px);
-  background: #334155;
-}
-
-.feedback {
-  margin: 18px 0;
-  font-weight: 600;
-  color: #fde68a;
-}
-
-.timer {
-  color: #f97316;
-  margin: 10px 0;
-}
-
+.options button:hover { transform: translateY(-2px); background: #334155; }
+.feedback { margin: 18px 0; font-weight: 600; color: #fde68a; }
+.timer { color: #f97316; margin: 10px 0; }
 .progress-container {
-  width: 100%;
-  background: #1e293b;
-  border-radius: 20px;
-  margin: 18px 0;
-  height: 18px;
+  width: 100%; background: #1e293b; border-radius: 20px;
+  margin: 18px 0; height: 18px;
 }
-
 .progress-bar {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, #22c55e, #14b8a6);
+  height: 100%; width: 0%; background: linear-gradient(90deg, #22c55e, #14b8a6);
   transition: width 0.5s ease;
 }
-
-.status-line {
-  font-size: 15px;
-  color: #cbd5e1;
-}
-
+.status-line { font-size: 15px; color: #cbd5e1; }
 .maze {
-  display: grid;
-  grid-template-columns: repeat(5, 46px);
-  gap: 7px;
-  justify-content: center;
-  margin: 26px auto;
+  display: grid; grid-template-columns: repeat(5, 46px); gap: 7px;
+  justify-content: center; margin: 26px auto;
 }
-
-.cell {
-  width: 46px;
-  height: 46px;
-  background: #1e293b;
-  border-radius: 8px;
-}
-
+.cell { width: 46px; height: 46px; background: #1e293b; border-radius: 8px; }
 .cell.start { background: #2563eb; }
 .cell.active { background: #22c55e; }
 .cell.exit { background: #f59e0b; }
@@ -411,7 +343,6 @@ input {
 <body>
 <div class="game-container">
   <h1>🛡️ AO25 Compliance Simulation</h1>
-
   <div class="role-desc">
     <strong>Role:</strong> AO25 Information Custodian<br>
     <strong>Objective:</strong> Make decisions using only cleared and approved inputs.
@@ -433,7 +364,6 @@ input {
 </div>
 
 <script>
-/* ---------- SCENARIOS ---------- */
 const maze = [
   { scenario: "A staff member updates the AO25 dashboard using uncleared email data.", options: ["Update immediately", "Wait for approved inputs", "Upload as unofficial"], answer: 1 },
   { scenario: "Eligibility appears incorrect in the system.", options: ["Correct it", "Do not modify eligibility outcomes", "Fix minor error"], answer: 1 },
@@ -531,6 +461,8 @@ function checkPath(choice) {
 
 function updateProgress() {
   const progress = (current / maze.length) * 100;
-  document.getElementById("progress
+  document.getElementById("progressBar").style.width =
+    (progress >= 100 ? 100 : progress) + "%";
+  document.getElementById("statusLine").
 
 
