@@ -6,7 +6,6 @@
 <title>AO25 Compliance Simulation</title>
 
 <style>
-/* --- Styling same as before --- */
 body { font-family: "Segoe UI", Roboto, Arial, sans-serif; background: linear-gradient(135deg, #0f172a, #020617); color: #e5e7eb; text-align: center; padding: 20px; animation: fadeIn 0.8s ease; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 .game-container { max-width: 900px; margin: auto; background: #020617; padding: 36px; border-radius: 18px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
@@ -41,6 +40,7 @@ input { padding: 12px; border-radius: 10px; border: none; width: 65%; background
   <input id="playerName" placeholder="Your Name"><br>
   <button class="start-btn" onclick="startSimulation()">Begin Simulation</button>
 
+  <div id="welcome"></div>
   <div id="game"></div>
   <div class="timer" id="timer"></div>
 
@@ -70,6 +70,7 @@ const maze = [
 let current = 0, score = 0;
 let timer, timeLeft = 10;
 let quizStartTime;
+let playerName = "";
 
 function getRoleStatus() {
   if (current < 3) return "Trainee";
@@ -79,11 +80,12 @@ function getRoleStatus() {
 }
 
 function startSimulation() {
-  const playerName = document.getElementById("playerName").value.trim();
+  playerName = document.getElementById("playerName").value.trim();
   if (!playerName) {
     alert("Please enter your name before starting the simulation.");
     return;
   }
+  document.getElementById("welcome").innerHTML = `<p>👋 Welcome, <strong>${playerName}</strong>! Good luck on your compliance journey.</p>`;
   current = score = 0;
   quizStartTime = Date.now();
   buildMaze();
@@ -148,13 +150,12 @@ function checkPath(choice) {
     buildMaze();
   }
   setTimeout(() => {
-    document.getElementById("feedback").innerText = "";
-    loadNode();
-  }, 1200);
-Here’s the **fixed and complete version** of your simulation code. It now:
+    document.getElementById("feedback").innerHere’s the **full, corrected HTML file** with all the requested features integrated:
 
 - Requires the player to **enter their name** before starting.  
-- Tracks and displays the **total quiz duration in minutes**.  
+- Shows a **welcome message** with the player’s name once the simulation begins.  
+- Displays the **player’s name in the final results** (“Congratulations, Alex!”).  
+- Tracks and shows **total quiz duration in minutes**.  
 - Ensures the **progress bar fills to 100%** when finished.  
 
 ```html
@@ -200,6 +201,7 @@ input { padding: 12px; border-radius: 10px; border: none; width: 65%; background
   <input id="playerName" placeholder="Your Name"><br>
   <button class="start-btn" onclick="startSimulation()">Begin Simulation</button>
 
+  <div id="welcome"></div>
   <div id="game"></div>
   <div class="timer" id="timer"></div>
 
@@ -229,6 +231,7 @@ const maze = [
 let current = 0, score = 0;
 let timer, timeLeft = 10;
 let quizStartTime;
+let playerName = "";
 
 function getRoleStatus() {
   if (current < 3) return "Trainee";
@@ -238,7 +241,73 @@ function getRoleStatus() {
 }
 
 function startSimulation() {
-  const playerName = document.getElementById("playerName").value.trim();
-  if (!playerName
+  playerName = document.getElementById("playerName").value.trim();
+  if (!playerName) {
+    alert("Please enter your name before starting the simulation.");
+    return;
+  }
+  document.getElementById("welcome").innerHTML = `<p>👋 Welcome, <strong>${playerName}</strong>! Good luck on your compliance journey.</p>`;
+  current = score = 0;
+  quizStartTime = Date.now();
+  buildMaze();
+  loadNode();
+}
+
+function buildMaze() {
+  const grid = document.getElementById("maze");
+  grid.innerHTML = "";
+  maze.forEach((_, i) => {
+    const cell = document.createElement("div");
+    cell.className = "cell";
+    if (i === 0) cell.classList.add("start");
+    if (i === maze.length - 1) cell.classList.add("exit");
+    grid.appendChild(cell);
+  });
+}
+
+function startTimer() {
+  clearInterval(timer);
+  timeLeft = 10;
+  const timerEl = document.getElementById("timer");
+  timerEl.innerText = `⏳ Clearance window: ${timeLeft}s`;
+
+  timer = setInterval(() => {
+    timeLeft--;
+    timerEl.innerText = `⏳ Clearance window: ${timeLeft}s`;
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      document.getElementById("feedback").innerText =
+        "⚠️ Clearance window expired. Workflow reset.";
+      current = score = 0;
+      buildMaze();
+      updateProgress();
+      setTimeout(loadNode, 1500);
+    }
+  }, 1000);
+}
+
+function loadNode() {
+  if (current >= maze.length) return endSimulation();
+  const q = maze[current];
+  document.getElementById("game").innerHTML = `
+    <div class="scenario">${q.scenario}</div>
+    <div class="options">
+      ${q.options.map((o,i)=>`<button onclick="checkPath(${i})">${o}</button>`).join("")}
+    </div>`;
+  updateProgress();
+  startTimer();
+}
+
+function checkPath(choice) {
+  clearInterval(timer);
+  if (choice === maze[current].answer) {
+    document.getElementsByClassName("cell")[current].classList.add("active");
+    document.getElementById("feedback").innerText = "✅ Approved input accepted.";
+    current++; score++;
+  } else {
+    document.getElementById("feedback").innerText =
+      "🚫 Compliance control triggered. Workflow reset.";
+    current = score = 0;
+    buildMaze();
 
 
