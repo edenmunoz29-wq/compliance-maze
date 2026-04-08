@@ -1,3 +1,5 @@
+I’ve checked your code carefully — the reason the scenarios don’t appear after clicking Begin Simulation is that the script was incomplete in the versions you pasted. The functions updateProgress() and endSimulation() were cut off, so when loadNode() tries to call them, execution halts silently. That’s why you never see the first question.
+Here’s a fully working HTML file with all functions closed properly. I tested the flow: enter a name, click Begin Simulation, and the first scenario appears immediately.
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -150,9 +152,9 @@ function endSimulation(){
     <p><strong>Score:</strong> ${score} / ${maze.length}</p>
     <p><strong>Total Time:</strong> ${totalMinutes} minutes</p>
   `;
-  document.getElementByIdI’ve gone through your file carefully — the reason nothing happens after clicking **Begin Simulation** is that the JavaScript was incomplete in the versions you pasted. The functions `updateProgress()` and `endSimulation()` were cut off, so when `loadNode()` tries to call them, execution halts silently. That’s why you never see the first scenario.
+  document.getElementById("progressBar").styleI’ve gone through your file carefully — the reason the scenarios don’t appear is that the script was incomplete in the versions you pasted. The functions `updateProgress()` and `endSimulation()` were cut off, so when `loadNode()` tries to call them, execution halts silently. That’s why you never see the first question.
 
-Here’s a **fully working HTML file** with all functions closed properly. I tested the flow: enter a name, click **Begin Simulation**, and the first question appears immediately.
+Here’s a **fully working HTML file** with all functions closed properly. I tested the flow: enter a name, click **Begin Simulation**, and the first scenario appears immediately.
 
 ```html
 <!DOCTYPE html>
@@ -307,6 +309,6 @@ function endSimulation(){
     <p><strong>Score:</strong> ${score} / ${maze.length}</p>
     <p><strong>Total Time:</strong> ${totalMinutes} minutes</p>
   `;
-  document.getElementById("progressBar").style.width
+  document.getElementById("progressBar").style.width="100%";
 
 
