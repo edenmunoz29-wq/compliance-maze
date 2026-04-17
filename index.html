@@ -92,7 +92,7 @@ function loadNode(){
 }
 
 function startTimer(){
-  let timeLeft=15; document.getElementById("timer").innerText=`⏱ ${timeLeft}s`;
+  let timeLeft=10; document.getElementById("timer").innerText=`⏱ ${timeLeft}s`;
   timer=setInterval(()=>{ timeLeft--;
     document.getElementById("timer").innerText=`⏱ ${timeLeft}s`;
     if(timeLeft<=0){ clearInterval(timer);
